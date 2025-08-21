@@ -1,0 +1,68 @@
+using UnityEngine;
+
+public class PlayerAttackState : PlayerState
+{
+    private float attackStartTime;
+    private AttackData currentAttackData;
+    private bool hasPerformedAttack; public bool IsGroundedAttack { get; private set; }
+    public void SetIsGroundedAttack(bool isGrounded)
+    {
+        this.IsGroundedAttack = isGrounded;
+    }
+    public PlayerAttackState(PlayerController player, string stateName) : base(player, stateName) { }
+
+    public override void Enter()
+    {
+        attackStartTime = Time.time;
+        player.lastAttackTime = Time.time;
+        hasPerformedAttack = false; player.IsAttackInputBuffered = false;
+        currentAttackData = player.stats.attackChain[player.ComboCounter];
+
+        if (player.Anim != null)
+        {
+            player.Anim.Play(currentAttackData.animationName);
+        }
+
+    }
+
+    public override void LogicUpdate()
+    {
+        base.LogicUpdate();
+
+        if (player.AttackInput)
+        {
+            player.IsAttackInputBuffered = true;
+        }
+
+        if (Time.time >= attackStartTime + currentAttackData.attackDuration)
+        {
+            if (player.IsAttackInputBuffered && player.ComboCounter < player.stats.attackChain.Length - 1)
+            {
+                player.ComboCounter++; player.AttackState.SetIsGroundedAttack(this.IsGroundedAttack);
+                stateMachine.ChangeState(player.AttackState);
+            }
+            else
+            {
+                player.ComboCounter = 0; if (player.IsGrounded)
+                {
+                    stateMachine.ChangeState(player.IdleState);
+                }
+                else
+                {
+                    stateMachine.ChangeState(player.InAirState);
+                }
+            }
+        }
+    }
+
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
+    }
+
+    public override void AnimationTrigger()
+    {
+        base.AnimationTrigger();
+        player.PerformAttack(true, currentAttackData);
+    }
+}
