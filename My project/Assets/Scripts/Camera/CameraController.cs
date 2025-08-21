@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// 카메라 무빙 설정 클래스
-/// </summary>
 public class CameraController : MonoBehaviour
 {
     [Header("Target Tracking")]
@@ -39,7 +36,6 @@ public class CameraController : MonoBehaviour
         lookAheadOffset = Vector3.zero;
     }
 
-    // 모든 게임 로직이 실행된 후 카메라 위치를 업데이트
     private void LateUpdate()
     {
         if (target == null)
@@ -49,34 +45,24 @@ public class CameraController : MonoBehaviour
         }
 
         Vector3 targetPosition = new Vector3(target.position.x, target.position.y, transform.position.z);
-        transform.position = targetPosition; // SmoothDamp 없이 바로 위치 지정
-
+        transform.position = targetPosition;
         ApplyBounds();
     }
 
-    /// <summary>
-    /// 계산된 카메라 위치를 설정된 경계 내에 가두는 함수
-    /// </summary>
     private void ApplyBounds()
     {
-        // 카메라 영역의 절반 크기를 계산
         float camHeight = mainCam.orthographicSize;
         float camWidth = camHeight * mainCam.aspect;
 
-        // Mathf.Clamp를 사용
         float clampedX = Mathf.Clamp(transform.position.x, minBounds.x + camWidth, maxBounds.x - camWidth);
         float clampedY = Mathf.Clamp(transform.position.y, minBounds.y + camHeight, maxBounds.y - camHeight);
 
         transform.position = new Vector3(clampedX, clampedY, transform.position.z);
     }
 
-    /// <summary>
-    /// 유니티 에디터의 씬(Scene) 뷰에서 경계를 시각적으로 보임
-    /// </summary>
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(1, 0, 0, 0.5f); // 반투명 빨간색
-        Vector3 center = (minBounds + maxBounds) * 0.5f;
+        Gizmos.color = new Color(1, 0, 0, 0.5f); Vector3 center = (minBounds + maxBounds) * 0.5f;
         Vector2 size = maxBounds - minBounds;
         Gizmos.DrawWireCube(center, size);
     }
