@@ -1,0 +1,124 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d6a7d9ef3f204e42a7277d5d4828d57, type: 3}
+  m_Name: PlayerStats
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  maxStamina: 1
+  staminaDrainRate: 20
+  staminaRegenRate: 15
+  staminaRegenDelay: 1
+  moveSpeed: 7
+  runSpeed: 12
+  jumpForce: 12
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  wallCheckDistance: 1
+  wallSlideSpeed: 3
+  wallJumpForce: {x: 8, y: 16}
+  dashSpeed: 12
+  dashTime: 0.4
+  dashCooldown: 1
+  dashAttackData:
+    animationName: ATTACK 1
+    attackDuration: 0.8
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2, y: 3}
+    groundAttackDamage: 2
+    airAttackDamage: 2
+  throwAnimationDuration: 0.5
+  parryWindow: 0.15
+  maxHealCharges: 3
+  healAmount: 1
+  healingDuration: 1.5
+  projectilePrefab: {fileID: 6049548978417220362, guid: fdaa5d1a2b73d3d4180c3f9a32920cf5, type: 3}
+  maxThrowCharges: 10
+  throwCooldown: 1
+  throwForce: 10
+  maxSpecialAttackCharges: 2
+  specialAttackCooldown: 5
+  specialAttackData:
+    animationName: SPECIAL ATTACK
+    attackDuration: 1.2
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 3, y: 3}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 3, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  invincibilityDuration: 0.55
+  knockbackForce: {x: 5, y: 5}
+  attackCooldown: 0.5
+  comboResetTime: 0.8
+  attackChain:
+  - animationName: ATTACK 1
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  - animationName: ATTACK 2
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  - animationName: ATTACK 3
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  airAttackData:
+    animationName: attack
+    attackDuration: 0.4
+    attackPointOffset: {x: 1, y: 0.5}
+    groundAttackPointOffset: {x: 0.19, y: 0.5}
+    groundAttackBoxSize: {x: 1, y: 1}
+    airAttackPointOffset: {x: 0.19, y: -0.5}
+    airAttackBoxSize: {x: 1, y: 1}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  airAttackMoveSpeedMultiplier: 0.5
+  crouchColliderSize: {x: 1, y: 1.5}
+  crouchColliderOffset: {x: 0, y: -0.25}
+  climbSpeed: 5
+  groundCheckDistance: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  ladderLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  climbingPlayerLayer:
+    serializedVersion: 2
+    m_Bits: 512
