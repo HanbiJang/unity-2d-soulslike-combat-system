@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     private int currentHealth;
     private SpriteRenderer sr;
 
-    [Tooltip("ÀÌ ÀûÀÌ ÇÃ·¹ÀÌ¾î¿¡°Ô ÀÔÈ÷´Â ÇÇÇØ·®ÀÔ´Ï´Ù.")]
+    [Tooltip("ì´ ì ì´ í”Œë ˆì´ì–´ì—ê²Œ ì…íˆëŠ” í”¼í•´ëŸ‰")]
     public int attackDamage = 1;
 
     void Awake()
@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log(gameObject.name + "°¡ " + damage + "ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù! ÇöÀç Ã¼·Â: " + currentHealth);
+        Debug.Log(gameObject.name + "ê°€ " + damage + "ì˜ í”¼í•´ë¥¼ ì…ì—ˆìŠµë‹ˆë‹¤! í˜„ì¬ ì²´ë ¥: " + currentHealth);
 
         StartCoroutine(FlashRed());
 
@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log(gameObject.name + "°¡ Ã³Ä¡µÇ¾ú½À´Ï´Ù.");
+        Debug.Log(gameObject.name + "ê°€ ì²˜ì¹˜ë˜ì—ˆìŠµë‹ˆë‹¤.");
         Destroy(gameObject);
     }
 }
