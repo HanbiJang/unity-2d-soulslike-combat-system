@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [System.Serializable]
 public class AttackData
@@ -36,6 +36,8 @@ public class PlayerStatsSO : ScriptableObject
     public float moveSpeed = 7f;
     public float runSpeed = 12f;
     public float jumpForce = 12f;
+    [Tooltip("대시 중 점프 시 점프력 배수")]
+    public float dashJumpMultiplier = 1.3f;
 
     [Header("벽 액션")]
     public LayerMask wallLayer;

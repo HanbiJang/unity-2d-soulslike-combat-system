@@ -22,7 +22,7 @@ public class PlayerAttackState : PlayerState
         {
             player.Anim.Play(currentAttackData.animationName);
         }
-
+        player.SetVelocity(0, 0);
     }
 
     public override void LogicUpdate()

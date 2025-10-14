@@ -10,7 +10,6 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
-
         player.lastDashTime = Time.time; player.IsInvincible = true; dashCoroutine = player.StartCoroutine(Dash());
     }
     public override void Exit()

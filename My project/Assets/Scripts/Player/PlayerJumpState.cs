@@ -5,7 +5,17 @@ public class PlayerJumpState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.SetVelocity(player.Rb.velocity.x, player.stats.jumpForce);
+
+        float jumpForce = player.stats.jumpForce;
+
+        // 직전 상태가 Dash였다면 배로 점프
+        if (player.StateMachine.PreviousState == player.RunState)
+        {
+            jumpForce *= player.stats.dashJumpMultiplier;
+        }
+
+        player.SetVelocity(player.Rb.velocity.x* jumpForce, jumpForce);
+
     }
 
     public override void LogicUpdate()

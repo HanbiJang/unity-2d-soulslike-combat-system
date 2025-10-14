@@ -19,7 +19,7 @@ MonoBehaviour:
   staminaRegenDelay: 1
   moveSpeed: 7
   runSpeed: 12
-  jumpForce: 12
+  jumpForce: 15
   wallLayer:
     serializedVersion: 2
     m_Bits: 2048
@@ -39,7 +39,47 @@ MonoBehaviour:
     airAttackBoxSize: {x: 2, y: 3}
     groundAttackDamage: 2
     airAttackDamage: 2
-  throwAnimationDuration: 0.5
+  attackCooldown: 0.5
+  comboResetTime: 0.8
+  attackChain:
+  - animationName: ATTACK 1
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.2, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2.7, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  - animationName: ATTACK 2
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2.7, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  - animationName: ATTACK 3
+    attackDuration: 0.5
+    attackPointOffset: {x: 0.5, y: 1}
+    groundAttackPointOffset: {x: 1, y: 0}
+    groundAttackBoxSize: {x: 2.5, y: 2}
+    airAttackPointOffset: {x: 1, y: -0.5}
+    airAttackBoxSize: {x: 2.5, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  airAttackData:
+    animationName: attack
+    attackDuration: 0.4
+    attackPointOffset: {x: 0.5, y: 0.5}
+    groundAttackPointOffset: {x: 0.19, y: 0.5}
+    groundAttackBoxSize: {x: 2.7, y: 3}
+    airAttackPointOffset: {x: 0.19, y: -0.5}
+    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackDamage: 1
+    airAttackDamage: 1
+  airAttackMoveSpeedMultiplier: 0.5
   parryWindow: 0.15
   maxHealCharges: 3
   healAmount: 1
@@ -48,6 +88,7 @@ MonoBehaviour:
   maxThrowCharges: 10
   throwCooldown: 1
   throwForce: 10
+  throwAnimationDuration: 0.5
   maxSpecialAttackCharges: 2
   specialAttackCooldown: 5
   specialAttackData:
@@ -62,47 +103,6 @@ MonoBehaviour:
     airAttackDamage: 1
   invincibilityDuration: 0.55
   knockbackForce: {x: 5, y: 5}
-  attackCooldown: 0.5
-  comboResetTime: 0.8
-  attackChain:
-  - animationName: ATTACK 1
-    attackDuration: 0.5
-    attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2, y: 3}
-    groundAttackDamage: 1
-    airAttackDamage: 1
-  - animationName: ATTACK 2
-    attackDuration: 0.5
-    attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2, y: 3}
-    groundAttackDamage: 1
-    airAttackDamage: 1
-  - animationName: ATTACK 3
-    attackDuration: 0.5
-    attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2, y: 3}
-    groundAttackDamage: 1
-    airAttackDamage: 1
-  airAttackData:
-    animationName: attack
-    attackDuration: 0.4
-    attackPointOffset: {x: 1, y: 0.5}
-    groundAttackPointOffset: {x: 0.19, y: 0.5}
-    groundAttackBoxSize: {x: 1, y: 1}
-    airAttackPointOffset: {x: 0.19, y: -0.5}
-    airAttackBoxSize: {x: 1, y: 1}
-    groundAttackDamage: 1
-    airAttackDamage: 1
-  airAttackMoveSpeedMultiplier: 0.5
   crouchColliderSize: {x: 1, y: 1.5}
   crouchColliderOffset: {x: 0, y: -0.25}
   climbSpeed: 5

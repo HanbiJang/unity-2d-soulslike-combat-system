@@ -3,6 +3,12 @@ public class PlayerRunState : PlayerGroundedState
 {
     public PlayerRunState(PlayerController player, string stateName) : base(player, stateName) { }
 
+    public override void Enter()
+    {
+        base.Enter();
+        Debug.Log("런");
+    }
+
     public override void LogicUpdate()
     {
         base.LogicUpdate();
