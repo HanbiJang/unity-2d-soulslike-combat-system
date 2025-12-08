@@ -20,6 +20,7 @@ MonoBehaviour:
   moveSpeed: 7
   runSpeed: 12
   jumpForce: 15
+  dashJumpMultiplier: 1.3
   wallLayer:
     serializedVersion: 2
     m_Bits: 2048

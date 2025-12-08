@@ -6,7 +6,6 @@ public class PlayerRunState : PlayerGroundedState
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("런");
     }
 
     public override void LogicUpdate()
