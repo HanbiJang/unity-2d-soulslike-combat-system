@@ -40,9 +40,10 @@ public class PlayerStatsManager : MonoBehaviour
 
     public bool TryUseStamina(float amount)
     {
-        if (CurrentStamina >= amount)
+        float toUse = Mathf.Min(amount, CurrentStamina);
+        if (toUse > 0f)
         {
-            CurrentStamina -= amount;
+            CurrentStamina -= toUse;
             lastStaminaUseTime = Time.time;
             return true;
         }

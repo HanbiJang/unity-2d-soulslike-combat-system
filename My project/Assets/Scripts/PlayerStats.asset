@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
   maxHealth: 5
-  maxStamina: 1
+  maxStamina: 100
   staminaDrainRate: 20
   staminaRegenRate: 15
   staminaRegenDelay: 1
+  minRunStartDuration: 1
   moveSpeed: 7
   runSpeed: 12
   jumpForce: 15

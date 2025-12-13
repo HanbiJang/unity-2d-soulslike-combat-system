@@ -32,6 +32,8 @@ public class PlayerStatsSO : ScriptableObject
     [Header("스태미나")]
     public float maxStamina = 100f;
     public float staminaDrainRate = 20f; public float staminaRegenRate = 15f; public float staminaRegenDelay = 1f;
+    [Tooltip("달리기 시작에 필요한 최소 지속 시간(초)")]
+    public float minRunStartDuration = 0.3f;
     [Header("이동 관련")]
     public float moveSpeed = 7f;
     public float runSpeed = 12f;

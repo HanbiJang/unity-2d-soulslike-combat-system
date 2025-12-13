@@ -30,7 +30,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ " + damage + "ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù! ÇöÀç Ã¼·Â: " + currentHealth);
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾î°¡ " + damage + "ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¸ï¿½ ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½! ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -48,7 +48,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        isDead = true; Debug.Log("ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù.");
+        isDead = true; Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 
         controller.StateMachine.ChangeState(controller.DeathState);
     }
@@ -57,8 +57,9 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth += amount;
         currentHealth = Mathf.Min(currentHealth, controller.stats.maxHealth);
-        Debug.Log("Ã¼·ÂÀ» " + amount + "¸¸Å­ È¸º¹Çß½À´Ï´Ù! ÇöÀç Ã¼·Â: " + currentHealth);
+        Debug.Log("Ã¼ï¿½ï¿½ï¿½ï¿½ " + amount + "ï¿½ï¿½Å­ È¸ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½! ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + currentHealth);
     }
+    public int CurrentHealth => currentHealth;
 
     private void OnCollisionStay2D(Collision2D collision)
     {
