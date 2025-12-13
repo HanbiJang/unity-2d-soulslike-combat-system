@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   maxStamina: 100
-  staminaDrainRate: 20
+  staminaDrainRate: 40
   staminaRegenRate: 15
   staminaRegenDelay: 1
   minRunStartDuration: 1
@@ -24,6 +24,7 @@ MonoBehaviour:
   dashAttackStaminaCost: 6
   specialAttackStaminaCost: 20
   throwStaminaCost: 4
+  runDirectionGraceTime: 0.1
   moveSpeed: 7
   runSpeed: 12
   jumpForce: 15

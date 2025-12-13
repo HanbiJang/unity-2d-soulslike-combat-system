@@ -60,6 +60,9 @@ public class PlayerStatsSO : ScriptableObject
     public float comboResetTime = 0.5f; public AttackData[] attackChain; public AttackData airAttackData;[Tooltip("공중 공격할 때 캐릭터 이동속도를 얼마나 줄일지 (0이면 제자리, 1이면 속도 유지)")]
     [Range(0f, 1f)]
     public float airAttackMoveSpeedMultiplier = 0.5f;
+    [Header("달리기 입력 관성")]
+    [Tooltip("방향키가 잠깐 0이 되어도 달리기를 유지할 허용 시간(초)")]
+    public float runDirectionGraceTime = 0.1f;
 
     [Header("방어 & 패링")]
     public float parryWindow = 0.15f;

@@ -1,17 +1,24 @@
 using UnityEngine;
 public class PlayerRunState : PlayerGroundedState
 {
+    private float lastNonZeroXTime;
     public PlayerRunState(PlayerController player, string stateName) : base(player, stateName) { }
 
     public override void Enter()
     {
         base.Enter();
+        lastNonZeroXTime = Time.time;
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        if (!player.IsRunInput || player.StatsManager.CurrentStamina <= 0)
+        if (Mathf.Abs(player.Input.x) > 0f)
+        {
+            lastNonZeroXTime = Time.time;
+        }
+        bool directionIdleTooLong = Mathf.Abs(player.Input.x) == 0f && Time.time - lastNonZeroXTime > player.stats.runDirectionGraceTime;
+        if (!player.IsRunInput || directionIdleTooLong || player.StatsManager.CurrentStamina <= 0)
         {
             stateMachine.ChangeState(player.MoveState);
             return;

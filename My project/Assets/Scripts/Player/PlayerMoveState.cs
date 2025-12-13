@@ -6,7 +6,7 @@ public class PlayerMoveState : PlayerGroundedState
     {
         base.LogicUpdate();
         float minRunStamina = player.stats.staminaDrainRate * player.stats.minRunStartDuration;
-        if (player.IsRunInput && player.StatsManager.CurrentStamina >= minRunStamina)
+        if (player.IsRunInput && player.Input.x != 0 && player.StatsManager.CurrentStamina >= minRunStamina)
         {
             stateMachine.ChangeState(player.RunState);
             return;
