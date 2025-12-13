@@ -7,6 +7,7 @@ public class PlayerThrowState : PlayerState
     public override void Enter()
     {
         base.Enter(); entryTime = Time.time;
+        player.StatsManager.TryUseStamina(player.stats.throwStaminaCost);
         player.StatsManager.UseThrowCharge();
         player.SetVelocity(0, 0);
     }
@@ -34,7 +35,7 @@ public class PlayerThrowState : PlayerState
         }
         else
         {
-            Debug.LogWarning("PlayerStatsSO¿¡ projectilePrefabÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+            Debug.LogWarning("PlayerStatsSOï¿½ï¿½ projectilePrefabï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½!");
         }
     }
 }

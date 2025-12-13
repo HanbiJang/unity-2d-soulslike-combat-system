@@ -15,6 +15,7 @@ public class PlayerDashAttackState : PlayerState
 
     public override void Enter()
     {
+        player.StatsManager.TryUseStamina(player.stats.dashAttackStaminaCost);
         attackStartTime = Time.time;
         player.lastAttackTime = Time.time;
         dashAttackData = player.stats.dashAttackData;

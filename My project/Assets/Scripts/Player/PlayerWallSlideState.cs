@@ -17,7 +17,7 @@ public class PlayerWallSlideState : PlayerState
             return;
         }
 
-        if (player.JumpInput)
+        if (player.JumpInput && player.StatsManager.CurrentStamina >= player.stats.jumpStaminaCost)
         {
             stateMachine.ChangeState(player.WallJumpState);
             return;

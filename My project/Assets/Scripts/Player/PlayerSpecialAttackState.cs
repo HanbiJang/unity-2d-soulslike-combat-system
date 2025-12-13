@@ -6,6 +6,7 @@ public class PlayerSpecialAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.StatsManager.TryUseStamina(player.stats.specialAttackStaminaCost);
         attackStartTime = Time.time;
         player.StatsManager.UseSpecialAttackCharge();
         player.SetVelocity(0, 0);

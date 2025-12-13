@@ -5,6 +5,7 @@ public class PlayerJumpState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        player.StatsManager.TryUseStamina(player.stats.jumpStaminaCost);
 
         float jumpForce = player.stats.jumpForce;
 

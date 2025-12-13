@@ -13,12 +13,12 @@ public abstract class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.HealState);
             return;
         }
-        if (player.IsThrowInput && player.StatsManager.CanThrow())
+        if (player.IsThrowInput && player.StatsManager.CanThrow() && player.StatsManager.CurrentStamina >= player.stats.throwStaminaCost)
         {
             stateMachine.ChangeState(player.ThrowState);
             return;
         }
-        if (player.IsSpecialAttackInput && player.StatsManager.CanUseSpecialAttack())
+        if (player.IsSpecialAttackInput && player.StatsManager.CanUseSpecialAttack() && player.StatsManager.CurrentStamina >= player.stats.specialAttackStaminaCost)
         {
             stateMachine.ChangeState(player.SpecialAttackState);
             return;
@@ -29,7 +29,7 @@ public abstract class PlayerGroundedState : PlayerState
             return;
         }
 
-        if (player.AttackInput && player.CanAttack())
+        if (player.AttackInput && player.CanAttack() && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
         {
             stateMachine.ChangeState(player.AttackState);
             return;
@@ -58,7 +58,7 @@ public abstract class PlayerGroundedState : PlayerState
             }
         }
 
-        if (player.JumpInput)
+        if (player.JumpInput && player.StatsManager.CurrentStamina >= player.stats.jumpStaminaCost)
         {
             if (player.Input.y < -0.5f)
             {

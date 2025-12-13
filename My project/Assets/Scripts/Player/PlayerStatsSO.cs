@@ -34,6 +34,13 @@ public class PlayerStatsSO : ScriptableObject
     public float staminaDrainRate = 20f; public float staminaRegenRate = 15f; public float staminaRegenDelay = 1f;
     [Tooltip("달리기 시작에 필요한 최소 지속 시간(초)")]
     public float minRunStartDuration = 0.3f;
+    [Header("스태미나 소비")]
+    public float jumpStaminaCost = 10f;
+    public float attackStaminaCost = 8f;
+    public float airAttackStaminaCost = 10f;
+    public float dashAttackStaminaCost = 6f;
+    public float specialAttackStaminaCost = 20f;
+    public float throwStaminaCost = 4f;
     [Header("이동 관련")]
     public float moveSpeed = 7f;
     public float runSpeed = 12f;

@@ -18,6 +18,12 @@ MonoBehaviour:
   staminaRegenRate: 15
   staminaRegenDelay: 1
   minRunStartDuration: 1
+  jumpStaminaCost: 10
+  attackStaminaCost: 8
+  airAttackStaminaCost: 10
+  dashAttackStaminaCost: 6
+  specialAttackStaminaCost: 20
+  throwStaminaCost: 4
   moveSpeed: 7
   runSpeed: 12
   jumpForce: 15

@@ -12,13 +12,13 @@ public class PlayerInAirState : PlayerState
             return;
         }
 
-        if (player.AttackInput && player.CanAttack())
+        if (player.AttackInput && player.CanAttack() && player.StatsManager.CurrentStamina >= player.stats.airAttackStaminaCost)
         {
             stateMachine.ChangeState(player.AirAttackState);
             return;
         }
 
-        if (player.AttackInput && player.CanAttack())
+        if (player.AttackInput && player.CanAttack() && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
         {
             stateMachine.ChangeState(player.AttackState);
             return;

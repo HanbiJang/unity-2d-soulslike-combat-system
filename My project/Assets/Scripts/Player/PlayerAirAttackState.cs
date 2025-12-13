@@ -11,6 +11,7 @@ public class PlayerAirAttackState : PlayerState
     {
         base.Enter();
 
+        player.StatsManager.TryUseStamina(player.stats.airAttackStaminaCost);
         attackStartTime = Time.time;
         player.lastAttackTime = Time.time; airAttackData = player.stats.airAttackData;
 

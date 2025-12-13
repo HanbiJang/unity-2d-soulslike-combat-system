@@ -13,6 +13,7 @@ public class PlayerAttackState : PlayerState
 
     public override void Enter()
     {
+        player.StatsManager.TryUseStamina(player.stats.attackStaminaCost);
         attackStartTime = Time.time;
         player.lastAttackTime = Time.time;
         hasPerformedAttack = false; player.IsAttackInputBuffered = false;
@@ -36,7 +37,7 @@ public class PlayerAttackState : PlayerState
 
         if (Time.time >= attackStartTime + currentAttackData.attackDuration)
         {
-            if (player.IsAttackInputBuffered && player.ComboCounter < player.stats.attackChain.Length - 1)
+            if (player.IsAttackInputBuffered && player.ComboCounter < player.stats.attackChain.Length - 1 && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
             {
                 player.ComboCounter++; player.AttackState.SetIsGroundedAttack(this.IsGroundedAttack);
                 stateMachine.ChangeState(player.AttackState);
