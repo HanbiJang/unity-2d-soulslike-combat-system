@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
@@ -25,6 +25,9 @@ public class CameraController : MonoBehaviour
     private Vector3 lookAheadOffset;
     private float lastPlayerX;
     private Camera mainCam;
+    private Vector3 shakeOffset;
+    private float shakeTimeRemaining;
+    private float shakeIntensity;
 
     private void Awake()
     {
@@ -34,6 +37,9 @@ public class CameraController : MonoBehaviour
             lastPlayerX = target.position.x;
         }
         lookAheadOffset = Vector3.zero;
+        shakeOffset = Vector3.zero;
+        shakeTimeRemaining = 0f;
+        shakeIntensity = 0f;
     }
 
     private void LateUpdate()
@@ -45,8 +51,24 @@ public class CameraController : MonoBehaviour
         }
 
         Vector3 targetPosition = new Vector3(target.position.x, target.position.y, transform.position.z);
-        transform.position = targetPosition;
+        if (shakeTimeRemaining > 0f)
+        {
+            Vector2 rnd = Random.insideUnitCircle * shakeIntensity;
+            shakeOffset = new Vector3(rnd.x, rnd.y, 0f);
+            shakeTimeRemaining -= Time.deltaTime;
+            if (shakeTimeRemaining <= 0f)
+            {
+                shakeOffset = Vector3.zero;
+                shakeIntensity = 0f;
+            }
+        }
+        transform.position = targetPosition + shakeOffset;
         ApplyBounds();
+    }
+    public void TriggerShake(float intensity, float duration)
+    {
+        shakeIntensity = Mathf.Max(shakeIntensity, intensity);
+        shakeTimeRemaining = Mathf.Max(shakeTimeRemaining, duration);
     }
 
     private void ApplyBounds()

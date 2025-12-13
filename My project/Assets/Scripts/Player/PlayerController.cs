@@ -216,6 +216,11 @@ public class PlayerController : MonoBehaviour
         Enemy enemyComponent = enemyCollider.GetComponent<Enemy>();
         if (enemyComponent != null)
         {
+            var cam = Camera.main != null ? Camera.main.GetComponent<CameraController>() : null;
+            if (cam != null)
+            {
+                cam.TriggerShake(stats.cameraShakeOnHitIntensity, stats.cameraShakeOnHitDuration);
+            }
             enemyComponent.TakeDamage(damage);
         }
     }

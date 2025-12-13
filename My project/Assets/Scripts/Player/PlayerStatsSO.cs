@@ -94,4 +94,7 @@ public class PlayerStatsSO : ScriptableObject
     public LayerMask enemyLayer;
     public LayerMask playerLayer;
     public LayerMask climbingPlayerLayer;
+    [Header("카메라")]
+    public float cameraShakeOnHitIntensity = 0.15f;
+    public float cameraShakeOnHitDuration = 0.12f;
 }

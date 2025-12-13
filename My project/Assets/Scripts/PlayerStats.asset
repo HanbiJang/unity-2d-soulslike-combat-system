@@ -131,3 +131,5 @@ MonoBehaviour:
   climbingPlayerLayer:
     serializedVersion: 2
     m_Bits: 512
+  cameraShakeOnHitIntensity: 0.15
+  cameraShakeOnHitDuration: 0.12
