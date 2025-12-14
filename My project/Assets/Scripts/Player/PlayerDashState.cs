@@ -11,6 +11,12 @@ public class PlayerDashState : PlayerState
     {
         base.Enter();
         player.lastDashTime = Time.time; player.IsInvincible = true; dashCoroutine = player.StartCoroutine(Dash());
+        
+        // 대시 소리 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.PlayerDash);
+        }
     }
     public override void Exit()
     {

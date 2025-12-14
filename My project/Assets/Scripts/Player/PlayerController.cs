@@ -222,6 +222,14 @@ public class PlayerController : MonoBehaviour
                 cam.TriggerShake(stats.cameraShakeOnHitIntensity, stats.cameraShakeOnHitDuration);
             }
             enemyComponent.TakeDamage(damage);
+            
+            // 타격 사운드 재생 (재질별)
+            MaterialType hitMaterial = enemyComponent.materialType;
+            
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayWeaponHitSound(hitMaterial);
+            }
         }
     }
 

@@ -17,6 +17,12 @@ public class PlayerAirAttackState : PlayerState
 
         float newXVelocity = player.Rb.velocity.x * player.stats.airAttackMoveSpeedMultiplier;
         player.SetVelocity(newXVelocity, player.Rb.velocity.y);
+        
+        // 무기 휘두르는 소리 재생 (타격 전)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.WeaponSwing);
+        }
     }
 
     public override void LogicUpdate()

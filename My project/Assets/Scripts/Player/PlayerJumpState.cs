@@ -17,6 +17,11 @@ public class PlayerJumpState : PlayerState
 
         player.SetVelocity(player.Rb.velocity.x* jumpForce, jumpForce);
 
+        // 점프 소리 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.PlayerJump);
+        }
     }
 
     public override void LogicUpdate()

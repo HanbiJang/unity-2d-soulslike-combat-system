@@ -10,6 +10,12 @@ public class PlayerHUD : MonoBehaviour
     private void Awake()
     {
         if (player == null) player = FindObjectOfType<PlayerController>();
+        
+        // 배경음악 재생 (시작 시)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBackgroundMusic(SoundType.BackgroundMusic, 1f);
+        }
     }
 
     private void Start()

@@ -8,6 +8,9 @@ public class Enemy : MonoBehaviour
 
     [Tooltip("이 적이 플레이어에게 입히는 피해량")]
     public int attackDamage = 1;
+    
+    [Tooltip("타격 시 재생될 사운드 재질 타입")]
+    public MaterialType materialType = MaterialType.Flesh;
 
     void Awake()
     {

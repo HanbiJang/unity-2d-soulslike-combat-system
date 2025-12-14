@@ -14,6 +14,12 @@ public class PlayerHitState : PlayerState
 
         Vector2 knockback = new Vector2(player.stats.knockbackForce.x * knockbackDirection, player.stats.knockbackForce.y);
         player.SetVelocity(knockback.x, knockback.y);
+        
+        // 맞을 때 음성 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.PlayerHit);
+        }
     }
 
     public override void LogicUpdate()

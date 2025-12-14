@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Player\PlayerWallSlideState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerDashAttackState.cs" />
+    <Compile Include="Assets\Scripts\Sound\MaterialType.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerDashState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStatsManager.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Assets\Scripts\Player\PlayerClimbState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerJumpState.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Sound\SoundManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerAirAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHealState.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Assets\Scripts\Player\PlayerDeathState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMoveState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerThrowState.cs" />
+    <Compile Include="Assets\Scripts\Sound\SoundType.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStatsSO.cs" />
     <Compile Include="Assets\Scripts\UI\PlayerHUD.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerIdleState.cs" />
@@ -92,10 +95,8 @@
     <Compile Include="Assets\Scripts\Player\PlayerInAirState.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Warrior free set\License.txt" />
-    <None Include="Assets\Resources\FULL_Samurai 2D Pixel Art v1.2\License.txt" />
-    <None Include="Assets\Resources\Final\Social\Autor_note.txt" />
-    <None Include="Assets\Resources\Warrior free set\Contact.txt" />
+    <None Include="Assets\Resources\Images\FULL_Samurai 2D Pixel Art v1.2\License.txt" />
+    <None Include="Assets\Resources\Images\Final\Social\Autor_note.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

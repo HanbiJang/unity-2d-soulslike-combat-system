@@ -21,4 +21,15 @@ public class AnimationEventProxy : MonoBehaviour
             playerController.AnimationTrigger();
         }
     }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 발소리 재생을 위해 호출
+    /// </summary>
+    public void PlayFootstepSound()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.PlayerFootstep);
+        }
+    }
 }

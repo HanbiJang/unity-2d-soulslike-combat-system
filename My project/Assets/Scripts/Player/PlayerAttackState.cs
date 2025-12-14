@@ -24,6 +24,12 @@ public class PlayerAttackState : PlayerState
             player.Anim.Play(currentAttackData.animationName);
         }
         player.SetVelocity(0, 0);
+        
+        // 무기 휘두르는 소리 재생 (타격 전)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.WeaponSwing);
+        }
     }
 
     public override void LogicUpdate()
