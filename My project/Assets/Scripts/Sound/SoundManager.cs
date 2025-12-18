@@ -14,10 +14,15 @@ public class SoundManager : MonoBehaviour
     [Header("Sound Clips")]
     [SerializeField] private List<SoundClipData> soundClips = new List<SoundClipData>();
 
+    [Header("Sound Pitch Settings")]
+    [SerializeField] private float defaultPitch = 1f;
+    [SerializeField] private List<SoundPitchData> pitchOverrides = new List<SoundPitchData>();
+
     private Queue<AudioSource> availableSFXSources = new Queue<AudioSource>();
     private List<AudioSource> activeSFXSources = new List<AudioSource>();
     private Dictionary<SoundType, AudioClip[]> soundClipDictionary = new Dictionary<SoundType, AudioClip[]>();
     private Dictionary<MaterialType, SoundType> materialToSoundType = new Dictionary<MaterialType, SoundType>();
+    private Dictionary<SoundType, float> soundPitchDictionary = new Dictionary<SoundType, float>();
 
     [System.Serializable]
     public class SoundClipData
@@ -25,6 +30,15 @@ public class SoundManager : MonoBehaviour
         public SoundType soundType;
         [Tooltip("여러 개의 사운드 클립을 등록하면 랜덤으로 재생됩니다")]
         public AudioClip[] clips;
+    }
+
+    [System.Serializable]
+    public class SoundPitchData
+    {
+        public SoundType soundType;
+        [Range(0.5f, 2f)]
+        [Tooltip("1.0 = 원래 속도, 1.5 = 50% 빠름, 2.0 = 2배 빠름")]
+        public float pitch = 1f;
     }
 
     private void Awake()
@@ -91,6 +105,20 @@ public class SoundManager : MonoBehaviour
         materialToSoundType[MaterialType.Wood] = SoundType.WeaponHitWood;
         materialToSoundType[MaterialType.Stone] = SoundType.WeaponHitStone;
 
+        // 사운드 피치 딕셔너리 초기화 (기본값)
+        soundPitchDictionary[SoundType.PlayerFootstep] = 1.5f;      // 발소리 50% 빠르게
+        soundPitchDictionary[SoundType.WeaponSwing] = 1.4f;         // 무기 휘두르는 소리 40% 빠르게
+        soundPitchDictionary[SoundType.WeaponHitFlesh] = 1.2f;      // 타격 소리 20% 빠르게
+        soundPitchDictionary[SoundType.WeaponHitMetal] = 1.2f;
+        soundPitchDictionary[SoundType.WeaponHitWood] = 1.2f;
+        soundPitchDictionary[SoundType.WeaponHitStone] = 1.2f;
+
+        // 인스펙터에서 설정한 오버라이드 적용
+        foreach (var pitchData in pitchOverrides)
+        {
+            soundPitchDictionary[pitchData.soundType] = pitchData.pitch;
+        }
+
         // SFX AudioSource 풀 초기화
         if (sfxSourcePrefab == null)
         {
@@ -109,8 +137,9 @@ public class SoundManager : MonoBehaviour
 
     /// <summary>
     /// 효과음 재생 (여러 개 등록 시 랜덤으로 선택)
+    /// pitch가 -1이면 사운드 타입별 기본 pitch 사용, 그렇지 않으면 지정된 pitch 사용
     /// </summary>
-    public void PlaySFX(SoundType soundType, float volume = 1f, float pitch = 1f)
+    public void PlaySFX(SoundType soundType, float volume = 1f, float pitch = -1f)
     {
         if (!soundClipDictionary.ContainsKey(soundType))
         {
@@ -127,6 +156,15 @@ public class SoundManager : MonoBehaviour
 
         // 여러 개의 클립 중 랜덤으로 선택
         AudioClip clip = clips[Random.Range(0, clips.Length)];
+        
+        // pitch가 -1이면 기본값 사용, 그렇지 않으면 지정된 pitch 사용
+        if (pitch < 0)
+        {
+            pitch = soundPitchDictionary.ContainsKey(soundType) 
+                ? soundPitchDictionary[soundType] 
+                : defaultPitch;
+        }
+        
         PlaySFX(clip, volume, pitch);
     }
 
@@ -150,8 +188,9 @@ public class SoundManager : MonoBehaviour
 
     /// <summary>
     /// 재질에 따른 타격 소리 재생
+    /// pitch가 -1이면 사운드 타입별 기본 pitch 사용, 그렇지 않으면 지정된 pitch 사용
     /// </summary>
-    public void PlayWeaponHitSound(MaterialType materialType, float volume = 1f, float pitch = 1f)
+    public void PlayWeaponHitSound(MaterialType materialType, float volume = 1f, float pitch = -1f)
     {
         if (materialToSoundType.ContainsKey(materialType))
         {

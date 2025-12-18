@@ -67,7 +67,7 @@ public class PlayerStatsSO : ScriptableObject
     [Header("방어 & 패링")]
     public float parryWindow = 0.15f;
     [Header("힐링")]
-    public int maxHealCharges = 3; public int healAmount = 1; public float healingDuration = 1.5f;
+    public int maxHealCharges = 5; public int healAmount = 1; public float healingDuration = 1.5f;
     [Header("투척")]
     public GameObject projectilePrefab; public int maxThrowCharges = 10;
     public float throwCooldown = 1f;

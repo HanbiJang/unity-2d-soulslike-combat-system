@@ -43,12 +43,12 @@ public class PlayerHUD : MonoBehaviour
         if (healthFillImage != null && player.Health != null)
         {
             float target = (float)player.Health.CurrentHealth / player.stats.maxHealth;
-            healthFillImage.fillAmount = Mathf.MoveTowards(healthFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
+            healthFillImage.fillAmount = Mathf.Lerp(healthFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
         }
         if (staminaFillImage != null && player.StatsManager != null)
         {
             float target = player.StatsManager.CurrentStamina / player.stats.maxStamina;
-            staminaFillImage.fillAmount = Mathf.MoveTowards(staminaFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
+            staminaFillImage.fillAmount = Mathf.Lerp(staminaFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
         }
     }
 }

@@ -29,6 +29,13 @@ public class PlayerHealth : MonoBehaviour
             controller.DefendState.HandleDamage(damage, damageSource); return;
         }
 
+        // 회복 중인 경우 - 회복 중단
+        if (controller.StateMachine.CurrentState == controller.HealState)
+        {
+            controller.HealState.InterruptHealing();
+            // 물약은 HealState에서 소모하므로 여기서는 바로 피해 처리
+        }
+
         currentHealth -= damage;
         Debug.Log("�÷��̾ " + damage + "�� ���ظ� �Ծ����ϴ�! ���� ü��: " + currentHealth);
 
