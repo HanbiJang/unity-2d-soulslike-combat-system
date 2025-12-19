@@ -13,24 +13,32 @@ public class EnemyParryState : EnemyState
         base.Enter();
         parryStartTime = Time.time;
         hasParried = false;
-        enemy.SetVelocity(0, enemy.Rb.velocity.y);
+        enemy.SetVelocityX(0);
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
 
+        // 플레이어가 죽었으면 대기
+        if (enemy.IsPlayerDead())
+        {
+            stateMachine.ChangeState(enemy.IdleState);
+            return;
+        }
+
         // 패링 시간이 지나면 추적 상태로
         if (Time.time >= parryStartTime + parryWindow)
         {
             if (hasParried)
             {
-                // 패링 성공 후 반격
+                // 패링 성공 후 반격 (즉시 반격, 딜레이 무시)
                 stateMachine.ChangeState(enemy.MeleeAttackState);
             }
             else
             {
                 // 패링 실패
+                enemy.ResetActionDelay();
                 stateMachine.ChangeState(enemy.ChaseState);
             }
             return;

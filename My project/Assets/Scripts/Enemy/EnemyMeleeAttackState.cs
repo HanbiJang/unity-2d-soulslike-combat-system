@@ -13,7 +13,7 @@ public class EnemyMeleeAttackState : EnemyState
         base.Enter();
         attackStartTime = Time.time;
         hasPerformedAttack = false;
-        enemy.SetVelocity(0, enemy.Rb.velocity.y);
+        enemy.SetVelocityX(0);
 
         // 플레이어 방향으로 바라보기
         if (enemy.playerTarget != null)
@@ -27,12 +27,21 @@ public class EnemyMeleeAttackState : EnemyState
     {
         base.LogicUpdate();
 
+        // 플레이어가 죽었으면 대기
+        if (enemy.IsPlayerDead())
+        {
+            stateMachine.ChangeState(enemy.IdleState);
+            return;
+        }
+
         // 공격 중에는 플레이어가 가드 중이면 공격 취소하지 않음 (이미 공격 시작)
         // 공격이 끝나면 다시 체크
 
         // 공격 시간이 지나면 추적 상태로
         if (Time.time >= attackStartTime + attackDuration)
         {
+            // 공격 후 딜레이 리셋 (다음 행동까지 텀을 둠)
+            enemy.ResetActionDelay();
             stateMachine.ChangeState(enemy.ChaseState);
             return;
         }

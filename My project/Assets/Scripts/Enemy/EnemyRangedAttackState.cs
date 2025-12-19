@@ -13,7 +13,7 @@ public class EnemyRangedAttackState : EnemyState
         base.Enter();
         attackStartTime = Time.time;
         hasPerformedAttack = false;
-        enemy.SetVelocity(0, enemy.Rb.velocity.y);
+        enemy.SetVelocityX(0);
 
         // 플레이어 방향으로 바라보기
         if (enemy.playerTarget != null)
@@ -27,9 +27,18 @@ public class EnemyRangedAttackState : EnemyState
     {
         base.LogicUpdate();
 
+        // 플레이어가 죽었으면 대기
+        if (enemy.IsPlayerDead())
+        {
+            stateMachine.ChangeState(enemy.IdleState);
+            return;
+        }
+
         // 공격 시간이 지나면 추적 상태로
         if (Time.time >= attackStartTime + attackDuration)
         {
+            // 공격 후 딜레이 리셋 (다음 행동까지 텀을 둠)
+            enemy.ResetActionDelay();
             stateMachine.ChangeState(enemy.ChaseState);
             return;
         }

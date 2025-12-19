@@ -11,7 +11,7 @@ public class EnemyHitState : EnemyState
     {
         base.Enter();
         hitStartTime = Time.time;
-        enemy.SetVelocity(0, enemy.Rb.velocity.y);
+        enemy.SetVelocityX(0);
     }
 
     public override void LogicUpdate()

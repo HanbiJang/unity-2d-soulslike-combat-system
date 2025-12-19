@@ -28,13 +28,30 @@ public class EnemyController : Enemy
     [Tooltip("돌진 속도")]
     public float rushSpeed = 15f;
 
+    [Header("행동 딜레이 설정")]
+    [Tooltip("행동 사이 최소 딜레이 시간")]
+    public float minActionDelay = 0.5f;
+    
+    [Tooltip("행동 사이 최대 딜레이 시간")]
+    public float maxActionDelay = 2.0f;
+
     [Header("컴포넌트")]
     [Tooltip("스프라이트와 애니메이터가 있는 자식 오브젝트")]
     [SerializeField] private Transform visuals;
     
+    [Tooltip("지면 체크용 Transform (보스 발밑에 만들어주세요)")]
+    [SerializeField] private Transform groundCheck;
+    
+    [Tooltip("지면 레이어")]
+    [SerializeField] private LayerMask groundLayer;
+    
+    [Tooltip("지면 체크 거리")]
+    [SerializeField] private float groundCheckDistance = 0.3f;
+    
     public Rigidbody2D Rb { get; private set; }
     public Animator Anim { get; private set; }
     public EnemyStateMachine StateMachine { get; private set; }
+    public bool IsGrounded { get; private set; }
 
     // 상태
     public EnemyIdleState IdleState { get; private set; }
@@ -59,6 +76,10 @@ public class EnemyController : Enemy
     public bool isInCombat { get; private set; } = false;
     public bool isEnraged { get; private set; } = false;
     public bool IsFacingRight { get; private set; } = true;
+    
+    // 행동 딜레이 시스템
+    private float lastActionTime = -10f;
+    private float nextActionDelay = 0f;
 
     // 체력 정보 접근용 프로퍼티 (Enemy에서 상속)
     public float CurrentHealthPercentage => (float)CurrentHealth / MaxHealth;
@@ -67,6 +88,22 @@ public class EnemyController : Enemy
     {
         base.Awake();
         Rb = GetComponent<Rigidbody2D>();
+        
+        // GroundCheck 찾기
+        if (groundCheck == null)
+        {
+            groundCheck = transform.Find("GroundCheck");
+            if (groundCheck == null)
+            {
+                Debug.LogWarning("'GroundCheck' 자식 오브젝트를 찾을 수 없음! 보스 발밑에 만들어주세요.");
+            }
+        }
+        
+        // GroundLayer가 설정되지 않았으면 플레이어의 설정을 참고
+        if (groundLayer.value == 0 && playerController != null)
+        {
+            // 나중에 Start에서 설정
+        }
         
         if (visuals != null)
         {
@@ -82,6 +119,11 @@ public class EnemyController : Enemy
         if (playerController != null)
         {
             playerTarget = playerController.transform;
+            // 플레이어의 groundLayer를 참고
+            if (groundLayer.value == 0 && playerController.stats != null)
+            {
+                groundLayer = playerController.stats.groundLayer;
+            }
         }
 
         // 상태 머신 초기화
@@ -114,7 +156,21 @@ public class EnemyController : Enemy
 
     void FixedUpdate()
     {
+        CheckGrounded();
         StateMachine.CurrentState.PhysicsUpdate();
+    }
+    
+    private void CheckGrounded()
+    {
+        if (groundCheck != null)
+        {
+            IsGrounded = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        }
+        else
+        {
+            // GroundCheck가 없으면 항상 지면에 있다고 가정 (공중 이동 방지)
+            IsGrounded = true;
+        }
     }
 
     public void AnimationTrigger()
@@ -191,12 +247,60 @@ public class EnemyController : Enemy
         isInCombat = true;
     }
 
+    // 행동 딜레이 체크 (랜덤 딜레이가 지났는지 확인)
+    public bool CanPerformAction()
+    {
+        // 딜레이가 설정되지 않았으면 설정하고 즉시 허용 (첫 행동은 즉시 실행)
+        if (nextActionDelay <= 0f)
+        {
+            nextActionDelay = Random.Range(minActionDelay, maxActionDelay);
+            lastActionTime = Time.time;
+            return true;  // 첫 행동은 즉시 허용
+        }
+
+        // 딜레이가 지났는지 확인
+        if (Time.time >= lastActionTime + nextActionDelay)
+        {
+            // 다음 딜레이를 랜덤으로 설정 (엇박 효과)
+            nextActionDelay = Random.Range(minActionDelay, maxActionDelay);
+            lastActionTime = Time.time;
+            return true;
+        }
+
+        return false;
+    }
+
+    // 행동 실행 후 딜레이 리셋 (긴급 상황용)
+    public void ResetActionDelay()
+    {
+        nextActionDelay = 0f;
+        lastActionTime = Time.time;
+    }
+
     // 이동 관련
     public void SetVelocity(float x, float y)
     {
         if (Rb != null)
         {
-            Rb.velocity = new Vector2(x, y);
+            // 지면에 닿아있을 때만 Y 속도를 설정 (공중에서는 중력에 맡김)
+            if (IsGrounded)
+            {
+                Rb.velocity = new Vector2(x, y);
+            }
+            else
+            {
+                // 공중에서는 X 속도만 설정, Y는 중력에 맡김
+                Rb.velocity = new Vector2(x, Rb.velocity.y);
+            }
+        }
+    }
+    
+    // X 속도만 설정 (Y는 유지)
+    public void SetVelocityX(float x)
+    {
+        if (Rb != null)
+        {
+            Rb.velocity = new Vector2(x, Rb.velocity.y);
         }
     }
 

@@ -26,14 +26,23 @@ public class EnemyRushState : EnemyState
     {
         base.LogicUpdate();
 
+        // 플레이어가 죽었으면 대기
+        if (enemy.IsPlayerDead())
+        {
+            stateMachine.ChangeState(enemy.IdleState);
+            return;
+        }
+
         // 돌진 시간이 지나면 추적 상태로
         if (Time.time >= rushStartTime + rushDuration)
         {
+            // 돌진 후 딜레이 리셋
+            enemy.ResetActionDelay();
             stateMachine.ChangeState(enemy.ChaseState);
             return;
         }
 
-        // 플레이어에게 도달하면 근접 공격
+        // 플레이어에게 도달하면 근접 공격 (딜레이 무시 - 돌진 중이므로)
         if (enemy.GetDistanceToPlayer() <= enemy.attackRange)
         {
             stateMachine.ChangeState(enemy.MeleeAttackState);
@@ -45,6 +54,9 @@ public class EnemyRushState : EnemyState
     {
         base.PhysicsUpdate();
         
+        // 지면에 닿아있을 때만 돌진
+        if (!enemy.IsGrounded) return;
+        
         // 돌진 이동
         if (enemy.playerTarget != null)
         {
@@ -53,7 +65,7 @@ public class EnemyRushState : EnemyState
             enemy.CheckAndFlip(moveDirection);
         }
         
-        enemy.SetVelocity(rushDirection.x * enemy.rushSpeed, enemy.Rb.velocity.y);
+        enemy.SetVelocityX(rushDirection.x * enemy.rushSpeed);
     }
 }
 
