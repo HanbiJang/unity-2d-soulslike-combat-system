@@ -49,6 +49,14 @@ public class PlayerStatsManager : MonoBehaviour
         }
         return false;
     }
+    
+    // 스태미나 직접 감소 (가드 시 피해용)
+    public void UseStamina(float amount)
+    {
+        CurrentStamina -= amount;
+        CurrentStamina = Mathf.Max(0f, CurrentStamina);  // 0 이하로 내려가지 않도록
+        lastStaminaUseTime = Time.time;
+    }
 
     private void RegenStamina()
     {

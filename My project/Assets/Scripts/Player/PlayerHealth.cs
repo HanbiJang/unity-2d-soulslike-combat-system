@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHealth -= damage;
-        Debug.Log("�÷��̾ " + damage + "�� ���ظ� �Ծ����ϴ�! ���� ü��: " + currentHealth);
+        // Debug.Log("�÷��̾ " + damage + "�� ���ظ� �Ծ����ϴ�! ���� ü��: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -55,9 +55,16 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        isDead = true; Debug.Log("�÷��̾ ����߽��ϴ�.");
+        isDead = true; 
+        //Debug.Log("�÷��̾ ����߽��ϴ�.");
 
         controller.StateMachine.ChangeState(controller.DeathState);
+        
+        // Game Over UI 표시
+        if (GameOverUI.Instance != null)
+        {
+            GameOverUI.Instance.ShowGameOver();
+        }
     }
 
     public void Heal(int amount)
@@ -66,6 +73,20 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth, controller.stats.maxHealth);
         Debug.Log("ü���� " + amount + "��ŭ ȸ���߽��ϴ�! ���� ü��: " + currentHealth);
     }
+    // 가드 시 직접 피해 처리 (무적 시간, 넉백 등 없이)
+    public void TakeDamageDirectly(int damage)
+    {
+        if (isDead) return;
+        
+        currentHealth -= damage;
+        Debug.Log("플레이어가 " + damage + "의 피해를 입었습니다! 현재 체력: " + currentHealth);
+        
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+    
     public int CurrentHealth => currentHealth;
 
     private void OnCollisionStay2D(Collision2D collision)
