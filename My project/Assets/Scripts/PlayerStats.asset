@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d6a7d9ef3f204e42a7277d5d4828d57, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 100
   maxStamina: 100
   staminaDrainRate: 40
   staminaRegenRate: 15
@@ -45,8 +45,8 @@ MonoBehaviour:
     groundAttackBoxSize: {x: 2, y: 2}
     airAttackPointOffset: {x: 1, y: -0.5}
     airAttackBoxSize: {x: 2, y: 3}
-    groundAttackDamage: 2
-    airAttackDamage: 2
+    groundAttackDamage: 8
+    airAttackDamage: 8
   attackCooldown: 0.5
   comboResetTime: 0.8
   attackChain:
@@ -57,8 +57,8 @@ MonoBehaviour:
     groundAttackBoxSize: {x: 2.7, y: 2}
     airAttackPointOffset: {x: 1, y: -0.5}
     airAttackBoxSize: {x: 2.7, y: 3}
-    groundAttackDamage: 1
-    airAttackDamage: 1
+    groundAttackDamage: 7
+    airAttackDamage: 7
   - animationName: ATTACK 2
     attackDuration: 0.5
     attackPointOffset: {x: 0.5, y: 1}
@@ -85,13 +85,13 @@ MonoBehaviour:
     groundAttackBoxSize: {x: 2.7, y: 3}
     airAttackPointOffset: {x: 0.19, y: -0.5}
     airAttackBoxSize: {x: 2.7, y: 3}
-    groundAttackDamage: 1
-    airAttackDamage: 1
+    groundAttackDamage: 9
+    airAttackDamage: 9
   airAttackMoveSpeedMultiplier: 0.5
-  runDirectionGraceTime: 0.1
-  parryWindow: 0.15
-  maxHealCharges: 3
-  healAmount: 1
+  runDirectionGraceTime: 0.5
+  parryWindow: 0.2
+  maxHealCharges: 5
+  healAmount: 60
   healingDuration: 1.5
   projectilePrefab: {fileID: 6049548978417220362, guid: fdaa5d1a2b73d3d4180c3f9a32920cf5, type: 3}
   maxThrowCharges: 10

@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
     public bool IsInvincible { get; set; }
     public int ComboCounter { get; set; }
     public bool IsAttackInputBuffered { get; set; }
+    // 대사/컷씬 등에서 입력을 막기 위한 플래그
+    public bool IsInputDisabled { get; set; }
 
     public Rigidbody2D Rb { get; private set; }
     public Animator Anim { get; private set; }
@@ -130,6 +132,21 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // 대사/컷씬 등으로 입력이 막힌 상태라면, 입력을 모두 초기화하고 나머지 로직을 스킵
+        if (IsInputDisabled)
+        {
+            Input = Vector2.zero;
+            JumpInput = false;
+            DashInput = false;
+            AttackInput = false;
+            IsRunInput = false;
+            IsDefendInput = false;
+            IsHealInput = false;
+            IsThrowInput = false;
+            IsSpecialAttackInput = false;
+            return;
+        }
+
         Input = new Vector2(UnityEngine.Input.GetAxisRaw("Horizontal"), UnityEngine.Input.GetAxisRaw("Vertical"));
         if (UnityEngine.Input.GetButtonDown("Jump")) StartCoroutine(JumpInputStopRoutine());
         if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) StartCoroutine(DashInputStopRoutine());

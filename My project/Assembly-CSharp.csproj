@@ -60,6 +60,9 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.41f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\UI\DialogueData.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyBackAwayState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyIdleState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerWallSlideState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerDashAttackState.cs" />
     <Compile Include="Assets\Scripts\Sound\MaterialType.cs" />
@@ -67,35 +70,53 @@
     <Compile Include="Assets\Scripts\Player\PlayerAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStatsManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHitState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyRushState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyMeleeAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHealth.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerClimbState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerJumpState.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyController.cs" />
     <Compile Include="Assets\Scripts\Sound\SoundManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerAirAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerHealState.cs" />
+    <Compile Include="Assets\Scripts\UI\SpeechBubble.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCrouchState.cs" />
     <Compile Include="Assets\Scripts\Player\AnimationEventProxy.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerDefendState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyDeathState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerRunState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerWallJumpState.cs" />
+    <Compile Include="Assets\Scripts\UI\FontManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerGroundedState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerSpecialAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerDeathState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyEnrageState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyStateMachine.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyRangedAttackState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMoveState.cs" />
+    <Compile Include="Assets\Scripts\UI\BossHUD.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerThrowState.cs" />
     <Compile Include="Assets\Scripts\Sound\SoundType.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStatsSO.cs" />
     <Compile Include="Assets\Scripts\UI\PlayerHUD.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyChaseState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerIdleState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerState.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStateMachine.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyHitState.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyParryState.cs" />
+    <Compile Include="Assets\Scripts\UI\ControlsUI.cs" />
+    <Compile Include="Assets\Scripts\UI\DialogueSystem.cs" />
+    <Compile Include="Assets\Scripts\UI\GameOverUI.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerInAirState.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Images\FULL_Samurai 2D Pixel Art v1.2\License.txt" />
+    <None Include="Assets\Resources\Images\Samurai 2D Pixel Art v1.2\License.txt" />
+    <None Include="Assets\Resources\Images\Demon Samurai 2D Pixel Art\License.txt" />
     <None Include="Assets\Resources\Images\Final\Social\Autor_note.txt" />
   </ItemGroup>
   <ItemGroup>

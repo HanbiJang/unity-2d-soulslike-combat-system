@@ -2,11 +2,64 @@ using UnityEngine;
 
 public class EnemyChaseState : EnemyState
 {
+    private Collider2D[] enemyColliders;
+    private Collider2D[] playerColliders;
+    private bool collisionIgnored = false;
+
     public EnemyChaseState(EnemyController enemy, string stateName) : base(enemy, stateName) { }
 
     public override void Enter()
     {
         base.Enter();
+        
+        // 플레이어와의 충돌 무시 (플레이어를 밀지 않음)
+        enemyColliders = enemy.GetComponents<Collider2D>();
+        if (enemy.playerTarget != null)
+        {
+            playerColliders = enemy.playerTarget.GetComponents<Collider2D>();
+            
+            if (enemyColliders != null && playerColliders != null)
+            {
+                foreach (var enemyCol in enemyColliders)
+                {
+                    if (enemyCol != null)
+                    {
+                        foreach (var playerCol in playerColliders)
+                        {
+                            if (playerCol != null)
+                            {
+                                Physics2D.IgnoreCollision(enemyCol, playerCol, true);
+                            }
+                        }
+                    }
+                }
+                collisionIgnored = true;
+            }
+        }
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        
+        // 플레이어와의 충돌 무시 해제
+        if (collisionIgnored && enemyColliders != null && playerColliders != null)
+        {
+            foreach (var enemyCol in enemyColliders)
+            {
+                if (enemyCol != null)
+                {
+                    foreach (var playerCol in playerColliders)
+                    {
+                        if (playerCol != null)
+                        {
+                            Physics2D.IgnoreCollision(enemyCol, playerCol, false);
+                        }
+                    }
+                }
+            }
+            collisionIgnored = false;
+        }
     }
 
     public override void LogicUpdate()
