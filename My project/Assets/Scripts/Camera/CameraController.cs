@@ -28,6 +28,7 @@ public class CameraController : MonoBehaviour
     private Vector3 shakeOffset;
     private float shakeTimeRemaining;
     private float shakeIntensity;
+    private Transform originalTarget; // 원래 타겟 저장 (대화 종료 후 복원용)
 
     private void Awake()
     {
@@ -35,6 +36,7 @@ public class CameraController : MonoBehaviour
         if (target != null)
         {
             lastPlayerX = target.position.x;
+            originalTarget = target; // 원래 타겟 저장
         }
         lookAheadOffset = Vector3.zero;
         shakeOffset = Vector3.zero;
@@ -80,6 +82,37 @@ public class CameraController : MonoBehaviour
         float clampedY = Mathf.Clamp(transform.position.y, minBounds.y + camHeight, maxBounds.y - camHeight);
 
         transform.position = new Vector3(clampedX, clampedY, transform.position.z);
+    }
+
+    /// <summary>
+    /// 카메라 타겟을 변경합니다. (대화 중 등에 사용)
+    /// </summary>
+    /// <param name="newTarget">새로운 타겟 Transform. null이면 원래 타겟으로 복원</param>
+    public void SetTarget(Transform newTarget)
+    {
+        if (newTarget != null)
+        {
+            target = newTarget;
+        }
+        else
+        {
+            // null이면 원래 타겟으로 복원
+            if (originalTarget != null)
+            {
+                target = originalTarget;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 원래 타겟으로 복원합니다.
+    /// </summary>
+    public void RestoreOriginalTarget()
+    {
+        if (originalTarget != null)
+        {
+            target = originalTarget;
+        }
     }
 
     private void OnDrawGizmosSelected()

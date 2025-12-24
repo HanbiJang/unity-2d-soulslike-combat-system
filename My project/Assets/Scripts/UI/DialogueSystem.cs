@@ -16,17 +16,20 @@ public class DialogueSystem : MonoBehaviour
 
     [Header("대화 진행 UI")]
     [SerializeField] private GameObject continuePrompt;
-    [SerializeField] private Text continueText;
+    [SerializeField] private Image continueImage;
+    [SerializeField] private float fadeSpeed = 2f; // 페이드인아웃 속도
 
     [Header("참조")]
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform enemyTransform;
+    [SerializeField] private CameraController cameraController;
 
     private DialogueData currentDialogue;
     private int currentDialogueIndex = 0;
     private bool isDialogueActive = false;
     private bool canContinue = false;
     private PlayerController playerController;
+    private Coroutine fadeCoroutine; // 페이드인아웃 코루틴 참조
 
     private void Awake()
     {
@@ -44,12 +47,18 @@ public class DialogueSystem : MonoBehaviour
         // 플레이어 찾기
         if (playerTransform == null)
         {
+            // 씬 안에서 PlayerController를 찾아 Transform과 Controller를 모두 세팅
             PlayerController player = FindObjectOfType<PlayerController>();
             if (player != null)
             {
                 playerTransform = player.transform;
                 playerController = player;
             }
+        }
+        else
+        {
+            // 인스펙터에서 Transform을 직접 넣어둔 경우, 여기서 PlayerController를 가져온다
+            playerController = playerTransform.GetComponent<PlayerController>();
         }
 
         // 적 찾기
@@ -62,10 +71,24 @@ public class DialogueSystem : MonoBehaviour
             }
         }
 
+        // 카메라 컨트롤러 찾기
+        if (cameraController == null)
+        {
+            cameraController = FindObjectOfType<CameraController>();
+        }
+
         // Continue 프롬프트 초기화
         if (continuePrompt != null)
         {
             continuePrompt.SetActive(false);
+        }
+        
+        // Continue 이미지 초기화 (투명하게)
+        if (continueImage != null)
+        {
+            Color color = continueImage.color;
+            color.a = 0f;
+            continueImage.color = color;
         }
     }
 
@@ -165,6 +188,12 @@ public class DialogueSystem : MonoBehaviour
         {
             targetBubble.SetTarget(targetTransform);
             targetBubble.ShowDialogue(line.speakerName, line.dialogueText);
+            
+            // 카메라를 대사하는 캐릭터로 이동
+            if (cameraController != null)
+            {
+                cameraController.SetTarget(targetTransform);
+            }
         }
 
         // 자동 진행 또는 수동 진행
@@ -179,6 +208,8 @@ public class DialogueSystem : MonoBehaviour
             {
                 continuePrompt.SetActive(true);
             }
+            // 페이드인아웃 애니메이션 시작
+            StartFadeAnimation();
         }
     }
 
@@ -194,6 +225,9 @@ public class DialogueSystem : MonoBehaviour
 
         currentDialogueIndex++;
         canContinue = false;
+
+        // 페이드인아웃 애니메이션 중지
+        StopFadeAnimation();
 
         if (continuePrompt != null)
         {
@@ -215,6 +249,9 @@ public class DialogueSystem : MonoBehaviour
         isDialogueActive = false;
         canContinue = false;
 
+        // 페이드인아웃 애니메이션 중지
+        StopFadeAnimation();
+
         // 모든 말풍선 숨기기
         if (playerBubble != null)
         {
@@ -228,6 +265,12 @@ public class DialogueSystem : MonoBehaviour
         if (continuePrompt != null)
         {
             continuePrompt.SetActive(false);
+        }
+
+        // 카메라를 원래 타겟(플레이어)으로 복원
+        if (cameraController != null)
+        {
+            cameraController.RestoreOriginalTarget();
         }
 
         // 플레이어 입력 활성화
@@ -261,6 +304,68 @@ public class DialogueSystem : MonoBehaviour
     }
 
     public bool IsDialogueActive => isDialogueActive;
+
+    /// <summary>
+    /// Continue 이미지의 페이드인아웃 애니메이션을 시작합니다.
+    /// </summary>
+    private void StartFadeAnimation()
+    {
+        if (continueImage == null) return;
+
+        // 기존 코루틴이 실행 중이면 중지
+        StopFadeAnimation();
+
+        // 새 코루틴 시작
+        fadeCoroutine = StartCoroutine(FadeInOutAnimation());
+    }
+
+    /// <summary>
+    /// Continue 이미지의 페이드인아웃 애니메이션을 중지합니다.
+    /// </summary>
+    private void StopFadeAnimation()
+    {
+        if (fadeCoroutine != null)
+        {
+            StopCoroutine(fadeCoroutine);
+            fadeCoroutine = null;
+        }
+
+        // 이미지를 즉시 투명하게 만들기
+        if (continueImage != null)
+        {
+            Color color = continueImage.color;
+            color.a = 0f;
+            continueImage.color = color;
+        }
+    }
+
+    /// <summary>
+    /// Continue 이미지를 0에서 1로 반복적으로 페이드인아웃하는 코루틴입니다.
+    /// </summary>
+    private IEnumerator FadeInOutAnimation()
+    {
+        if (continueImage == null) yield break;
+
+        while (canContinue && isDialogueActive)
+        {
+            Color color = continueImage.color;
+            
+            // 0에서 1로, 1에서 0으로 반복 (Mathf.PingPong 사용)
+            // Time.time * fadeSpeed를 사용하여 시간에 따라 0~1 사이를 왕복
+            color.a = Mathf.PingPong(Time.time * fadeSpeed, 1f);
+            continueImage.color = color;
+
+            yield return null;
+        }
+
+        // 애니메이션 종료 시 투명하게
+        if (continueImage != null)
+        {
+            Color color = continueImage.color;
+            color.a = 0f;
+            continueImage.color = color;
+        }
+    }
 }
 
 
