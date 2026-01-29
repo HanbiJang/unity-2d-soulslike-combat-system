@@ -94,7 +94,25 @@ Thumbs.db
 Desktop.ini
 
 # ===================================
-# 그래픽 에셋 (도트 스프라이트 등)은 포함됩니다
-# Assets 폴더의 모든 그래픽 파일(.png, .jpg, .psd 등)과
-# .meta 파일이 Git에 추적됩니다
+# Resources 폴더의 이미지/텍스처 파일 제외
 # ===================================
+[Aa]ssets/[Rr]esources/**/*.png
+[Aa]ssets/[Rr]esources/**/*.jpg
+[Aa]ssets/[Rr]esources/**/*.jpeg
+[Aa]ssets/[Rr]esources/**/*.psd
+[Aa]ssets/[Rr]esources/**/*.tga
+[Aa]ssets/[Rr]esources/**/*.bmp
+[Aa]ssets/[Rr]esources/**/*.gif
+[Aa]ssets/[Rr]esources/**/*.tif
+[Aa]ssets/[Rr]esources/**/*.tiff
+[Aa]ssets/[Rr]esources/**/*.exr
+[Aa]ssets/[Rr]esources/**/*.hdr
+
+# Resources 폴더의 애니메이션 및 머티리얼 파일 제외
+[Aa]ssets/[Rr]esources/**/*.anim
+[Aa]ssets/[Rr]esources/**/*.mat
+[Aa]ssets/[Rr]esources/**/*.controller
+[Aa]ssets/[Rr]esources/**/*.prefab
+
+# Resources 폴더의 메타 파일도 제외
+[Aa]ssets/[Rr]esources/**/*.meta
