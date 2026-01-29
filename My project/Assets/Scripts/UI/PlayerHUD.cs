@@ -5,6 +5,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private PlayerController player;
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Image staminaFillImage;
+    [SerializeField] private Text throwChargesText;
     [SerializeField] private float fillLerpSpeed = 8f;
 
     private void Awake()
@@ -33,6 +34,10 @@ public class PlayerHUD : MonoBehaviour
                 float s = player.StatsManager != null ? player.StatsManager.CurrentStamina / player.stats.maxStamina : 0f;
                 staminaFillImage.fillAmount = s;
             }
+            if (throwChargesText != null)
+            {
+                UpdateThrowChargesText();
+            }
         }
     }
 
@@ -50,5 +55,19 @@ public class PlayerHUD : MonoBehaviour
             float target = player.StatsManager.CurrentStamina / player.stats.maxStamina;
             staminaFillImage.fillAmount = Mathf.Lerp(staminaFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
         }
+        
+        if (throwChargesText != null && player.StatsManager != null)
+        {
+            UpdateThrowChargesText();
+        }
+    }
+    
+    private void UpdateThrowChargesText()
+    {
+        if (player == null || player.StatsManager == null || throwChargesText == null) return;
+        
+        int current = player.StatsManager.CurrentThrowCharges;
+        int max = player.stats.maxThrowCharges;
+        throwChargesText.text = $"수리검: {current}/{max}";
     }
 }

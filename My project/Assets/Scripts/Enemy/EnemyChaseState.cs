@@ -42,8 +42,8 @@ public class EnemyChaseState : EnemyState
     {
         base.Exit();
         
-        // 플레이어와의 충돌 무시 해제
-        if (collisionIgnored && enemyColliders != null && playerColliders != null)
+        // 플레이어와의 충돌 무시 해제 (보스는 항상 충돌 무시 유지)
+        if (collisionIgnored && enemyColliders != null && playerColliders != null && !enemy.IsBoss)
         {
             foreach (var enemyCol in enemyColliders)
             {
@@ -60,6 +60,7 @@ public class EnemyChaseState : EnemyState
             }
             collisionIgnored = false;
         }
+        // 보스는 충돌 무시 상태 유지 (플레이어가 밀 수 없음)
     }
 
     public override void LogicUpdate()
@@ -138,18 +139,40 @@ public class EnemyChaseState : EnemyState
         }
     }
 
+    /// <summary>추적 시 플레이어 앞 attackRange 지점까지만 이동 (닿지 않도록).</summary>
+    private const float ChaseStopEpsilon = 0.02f;
+
     private void MoveTowardsPlayer()
     {
         if (enemy.playerTarget == null) return;
-        
-        // 지면에 닿아있을 때만 이동
         if (!enemy.IsGrounded) return;
 
-        Vector2 direction = (enemy.playerTarget.position - enemy.transform.position).normalized;
-        float moveDirection = direction.x;
-        
-        enemy.CheckAndFlip(moveDirection);
-        enemy.SetVelocityX(moveDirection * enemy.moveSpeed);
+        Vector2 enemyPos = enemy.transform.position;
+        Vector2 playerPos = enemy.playerTarget.position;
+        Vector2 toPlayer = (playerPos - enemyPos);
+        float distance = toPlayer.magnitude;
+
+        // 이미 attackRange 이내면 이동 안 함 (chase=공격 방지, 근접 전환은 LogicUpdate에서 처리)
+        if (distance <= enemy.attackRange)
+        {
+            enemy.SetVelocityX(0f);
+            return;
+        }
+
+        // 목표: 플레이어 바로 앞 attackRange 지점 (적↔플레이어 사이)
+        Vector2 dir = toPlayer.normalized;
+        Vector2 stopPoint = playerPos - dir * enemy.attackRange;
+        Vector2 toStop = stopPoint - enemyPos;
+
+        if (toStop.sqrMagnitude < ChaseStopEpsilon * ChaseStopEpsilon)
+        {
+            enemy.SetVelocityX(0f);
+            return;
+        }
+
+        float moveX = toStop.normalized.x;
+        enemy.CheckAndFlip(moveX);
+        enemy.SetVelocityX(moveX * enemy.moveSpeed);
     }
 }
 

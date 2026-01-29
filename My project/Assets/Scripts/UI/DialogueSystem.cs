@@ -123,11 +123,30 @@ public class DialogueSystem : MonoBehaviour
         isDialogueActive = true;
         canContinue = false;
 
+        // 컷씬 시작 시 모든 적이 플레이어를 바라보도록
+        FaceAllEnemiesTowardPlayer();
+
         // 플레이어 입력 비활성화
         DisablePlayerInput();
 
         // 첫 번째 대화 표시
         ShowDialogueLine(0);
+    }
+
+    private void FaceAllEnemiesTowardPlayer()
+    {
+        if (playerTransform == null) return;
+
+        Vector3 playerPos = playerTransform.position;
+        EnemyController[] enemies = FindObjectsOfType<EnemyController>();
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy == null) continue;
+            float dir = (playerPos - enemy.transform.position).x;
+            if (!Mathf.Approximately(dir, 0f))
+                enemy.CheckAndFlip(dir);
+        }
     }
 
     private void ShowDialogueLine(int index)

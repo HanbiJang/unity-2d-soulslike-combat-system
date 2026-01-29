@@ -1,11 +1,18 @@
 public enum SoundType
 {
-    // 캐릭터 사운드
+    // 플레이어 사운드
     PlayerFootstep,      // 발소리
     PlayerJump,          // 점프 소리
     PlayerDash,          // 대시 소리
     PlayerDeath,         // 죽을 때 음성
     PlayerHit,           // 맞을 때 음성
+    
+    // 적/보스 사운드
+    EnemyAttack,         // 적 공격 소리 (무기 휘두르는 소리)
+    EnemyRush,           // 적 돌진 소리
+    EnemyHit,            // 적이 맞을 때 음성
+    EnemyDeath,          // 적이 죽을 때 음성
+    EnemyEnrage,         // 보스 각성 (2페이즈) 음성
     
     // 무기 사운드
     WeaponSwing,        // 무기 휘두르는 소리 (타격하지 않은 경우)

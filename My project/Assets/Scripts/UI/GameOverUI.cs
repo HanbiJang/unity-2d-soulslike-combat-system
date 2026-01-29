@@ -88,6 +88,12 @@ public class GameOverUI : MonoBehaviour
         // 텍스트 딜레이
         yield return new WaitForSeconds(textDelay);
 
+        // 랜덤 게임 오버 메시지 설정
+        if (gameOverText != null)
+        {
+            gameOverText.text = GetRandomGameOverMessage();
+        }
+
         // Game Over 패널 표시
         if (gameOverPanel != null)
         {
@@ -141,6 +147,22 @@ public class GameOverUI : MonoBehaviour
         {
             darkOverlay.gameObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// 랜덤 게임 오버 메시지를 반환합니다.
+    /// </summary>
+    private string GetRandomGameOverMessage()
+    {
+        string[] messages = {
+            "YOU DIED",
+            "판결자가 당신을 기다립니다...",
+            "허노인의 양분이 되었습니다",
+            "기록에서 삭제되었습니다",
+            "패링 연습이 더 필요합니다"
+        };
+        
+        return messages[Random.Range(0, messages.Length)];
     }
 }
 
