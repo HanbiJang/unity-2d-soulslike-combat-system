@@ -13,6 +13,12 @@ public class EnemyDeathState : EnemyState
         deathStartTime = Time.time;
         enemy.SetVelocity(0, 0);
         
+        // 죽음 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.EnemyDeath);
+        }
+        
         Debug.Log(enemy.gameObject.name + "가 처치되었습니다.");
         
         // 보스인 경우 BossHUD에서 해제

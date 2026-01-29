@@ -68,6 +68,12 @@ public class EnemyRangedAttackState : EnemyState
     {
         if (enemy.playerTarget == null) return;
 
+        // 원거리 공격 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.EnemyAttack);
+        }
+
         // 원거리 투사체 발사 로직
         // 여기에 투사체 생성 코드 추가
         // 예: Instantiate(projectilePrefab, transform.position, Quaternion.identity);

@@ -32,7 +32,10 @@ public class PlayerStatsManager : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time >= lastStaminaUseTime + controller.stats.staminaRegenDelay)
+        // 가드 중에는 스태미너가 회복되지 않음
+        bool isDefending = controller.StateMachine.CurrentState == controller.DefendState;
+        
+        if (!isDefending && Time.time >= lastStaminaUseTime + controller.stats.staminaRegenDelay)
         {
             RegenStamina();
         }

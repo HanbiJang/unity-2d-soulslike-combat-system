@@ -7,8 +7,8 @@ public class EnemyController : Enemy
     [Tooltip("플레이어 감지 범위")]
     public float detectionRange = 15f;
     
-    [Tooltip("근접 공격 범위")]
-    public float attackRange = 2f;
+    [Tooltip("근접 공격 범위. Chase 정지 거리이기도 함. 크면 멀리서 멈춤.")]
+    public float attackRange = 3f;
     
     [Tooltip("돌진 발동 거리")]
     public float rushTriggerDistance = 8f;
@@ -17,10 +17,10 @@ public class EnemyController : Enemy
     public float rangedAttackDistance = 10f;
     
     [Tooltip("돌진 쿨다운")]
-    public float rushCooldown = 5f;
+    public float rushCooldown = 7f;
     
     [Tooltip("원거리 공격 쿨다운")]
-    public float rangedAttackCooldown = 3f;
+    public float rangedAttackCooldown = 5f;
     
     [Tooltip("이동 속도")]
     public float moveSpeed = 5f;
@@ -30,10 +30,10 @@ public class EnemyController : Enemy
 
     [Header("행동 딜레이 설정")]
     [Tooltip("행동 사이 최소 딜레이 시간")]
-    public float minActionDelay = 0.5f;
+    public float minActionDelay = 1.5f;
     
     [Tooltip("행동 사이 최대 딜레이 시간")]
-    public float maxActionDelay = 2.0f;
+    public float maxActionDelay = 5.5f;
 
     [Header("컴포넌트")]
     [Tooltip("스프라이트와 애니메이터가 있는 자식 오브젝트")]
@@ -52,6 +52,7 @@ public class EnemyController : Enemy
     public Animator Anim { get; private set; }
     public EnemyStateMachine StateMachine { get; private set; }
     public bool IsGrounded { get; private set; }
+    public SpriteRenderer SpriteRenderer => sr;
 
     // 상태
     public EnemyIdleState IdleState { get; private set; }
@@ -74,7 +75,22 @@ public class EnemyController : Enemy
     public float lastRushTime { get; set; } = -10f;
     public float lastRangedAttackTime { get; set; } = -10f;
     public bool isInCombat { get; private set; } = false;
-    public bool isEnraged { get; private set; } = false;
+    private bool _isEnraged = false;
+    
+    /// <summary>
+    /// 보스가 각성(2페이즈) 상태인지 여부. 체력이 50% 이하일 때 true가 됩니다.
+    /// </summary>
+    public bool isEnraged 
+    { 
+        get => _isEnraged;
+        private set => _isEnraged = value;
+    }
+    
+    /// <summary>
+    /// 각성 애니메이션이 이미 재생되었는지 여부. 각성 애니메이션은 한 번만 재생됩니다.
+    /// </summary>
+    public bool hasPlayedEnrageAnimation { get; set; } = false;
+    
     public bool IsFacingRight { get; private set; } = true;
     
     // 행동 딜레이 시스템
@@ -105,9 +121,16 @@ public class EnemyController : Enemy
             // 나중에 Start에서 설정
         }
         
+        // Animator와 SpriteRenderer를 visuals에서 가져오기
         if (visuals != null)
         {
             Anim = visuals.GetComponent<Animator>();
+            // 보스의 경우 SpriteRenderer도 visuals에 있음
+            SpriteRenderer visualsSr = visuals.GetComponent<SpriteRenderer>();
+            if (visualsSr != null)
+            {
+                sr = visualsSr;
+            }
         }
         else
         {
@@ -143,6 +166,30 @@ public class EnemyController : Enemy
     protected override void Start()
     {
         base.Start(); // Enemy의 Start 호출 (BossHUD 등록 등)
+
+        // 보스인 경우 플레이어와의 충돌을 항상 무시 (플레이어가 보스를 밀 수 없음)
+        if (IsBoss && playerTarget != null)
+        {
+            Collider2D[] enemyColliders = GetComponents<Collider2D>();
+            Collider2D[] playerColliders = playerTarget.GetComponents<Collider2D>();
+            
+            if (enemyColliders != null && playerColliders != null)
+            {
+                foreach (var enemyCol in enemyColliders)
+                {
+                    if (enemyCol != null)
+                    {
+                        foreach (var playerCol in playerColliders)
+                        {
+                            if (playerCol != null)
+                            {
+                                Physics2D.IgnoreCollision(enemyCol, playerCol, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // 초기 상태 설정
         StateMachine.Initialize(IdleState);
@@ -353,20 +400,30 @@ public class EnemyController : Enemy
         currentHealth -= damage;
         Debug.Log(gameObject.name + "가 " + damage + "의 피해를 입었습니다! 현재 체력: " + currentHealth);
 
+        // 피격 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.EnemyHit);
+        }
+
         // FlashRed 효과
         if (sr != null)
         {
             StartCoroutine(FlashRedCoroutine());
         }
 
-        // 체력이 50% 이하로 떨어지면 분노 상태
+        // 체력이 50% 이하로 떨어지면 분노 상태 (각성 애니메이션은 한 번만)
         if (CurrentHealthPercentage <= 0.5f && !isEnraged)
         {
             isEnraged = true;
+            
+            // 현재 상태가 HitState나 DeathState가 아니면 즉시 각성 상태로 전환
             if (StateMachine.CurrentState != HitState && StateMachine.CurrentState != DeathState)
             {
+                hasPlayedEnrageAnimation = true;
                 StateMachine.ChangeState(EnrageState);
             }
+            // HitState면 나중에 HitState에서 전환하도록 함
         }
 
         // 사망 처리 (상태 머신으로 처리)

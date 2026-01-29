@@ -16,6 +16,12 @@ public class EnemyRushState : EnemyState
         base.Enter();
         rushStartTime = Time.time;
 
+        // 돌진 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.EnemyRush);
+        }
+
         // 플레이어와의 충돌만 무시 (지면 충돌은 유지)
         enemyColliders = enemy.GetComponents<Collider2D>();
         if (enemy.playerTarget != null)
@@ -54,8 +60,8 @@ public class EnemyRushState : EnemyState
     {
         base.Exit();
         
-        // 플레이어와의 충돌 무시 해제
-        if (collisionIgnored && enemyColliders != null && playerColliders != null)
+        // 플레이어와의 충돌 무시 해제 (보스는 항상 충돌 무시 유지)
+        if (collisionIgnored && enemyColliders != null && playerColliders != null && !enemy.IsBoss)
         {
             foreach (var enemyCol in enemyColliders)
             {
@@ -72,6 +78,7 @@ public class EnemyRushState : EnemyState
             }
             collisionIgnored = false;
         }
+        // 보스는 충돌 무시 상태 유지 (플레이어가 밀 수 없음)
     }
 
     public override void LogicUpdate()

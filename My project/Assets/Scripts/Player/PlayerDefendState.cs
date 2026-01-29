@@ -3,6 +3,9 @@ public class PlayerDefendState : PlayerState
 {
     private float entryTime;
     private bool isParrying;
+    private bool hasParried;  // ?? ?? ??
+    private float parrySuccessTime;  // ?? ?? ??
+    private const float parryAnimationDuration = 0.5f;  // ?? ????? ?? ??
 
     public PlayerDefendState(PlayerController player, string stateName) : base(player, stateName) { }
 
@@ -10,19 +13,45 @@ public class PlayerDefendState : PlayerState
     {
         base.Enter();
         entryTime = Time.time;
-        isParrying = true; player.SetVelocity(0, 0);
+        isParrying = true;
+        hasParried = false;
+        player.SetVelocity(0, 0);
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        // ?? ??? ??? ? ?? ??
+        player.IsInvincible = false;
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
 
+        // ?? ?? ? ????? ?? ?
+        if (hasParried)
+        {
+            // ?? ?????? ??? ?? ??
+            if (Time.time >= parrySuccessTime + parryAnimationDuration)
+            {
+                player.IsInvincible = false;
+                hasParried = false;
+                Debug.Log("?? ????? ??, ?? ??");
+            }
+            
+            // ?? ????? ??? ??? ??
+            return;
+        }
+
+        // ?? ?? ??
         if (isParrying && Time.time >= entryTime + player.stats.parryWindow)
         {
             isParrying = false;
-            Debug.Log("패링 시간 종료. 이제부터 일반 방어입니다.");
+            Debug.Log("?? ?? ??. ???? ?? ?????.");
         }
 
+        // ?? ??? ??? Idle ???
         if (!player.IsDefendInput)
         {
             stateMachine.ChangeState(player.IdleState);
@@ -33,27 +62,54 @@ public class PlayerDefendState : PlayerState
     {
         if (isParrying)
         {
-            Debug.Log("패링 성공!");
-            // 패링 성공 시 피해 없음
+            Debug.Log("?? ??!");
+            
+            // ?? ?? ??
+            hasParried = true;
+            isParrying = false;
+            parrySuccessTime = Time.time;
+            
+            // ?? ??? ??
+            player.IsInvincible = true;
+            
+            // DEFEND 1 ????? ??
+            if (player.Anim != null)
+            {
+                player.Anim.Play("DEFEND 1");
+                Debug.Log("?? ????? ??: DEFEND 1");
+            }
+            
+            // ?? ?? ?? ??
+            ParryEffect parryEffect = player.GetComponent<ParryEffect>();
+            if (parryEffect != null)
+            {
+                parryEffect.PlayParryEffect();
+            }
+            else
+            {
+                Debug.LogWarning("ParryEffect ????? ?? ? ????!");
+            }
+            
+            // ?? ?? ? ?? ??
             return;
         }
         
-        // 가드 시: 공격의 10% 데미지 + 공격의 90%가 스태미나로 감소
-        int healthDamage = Mathf.RoundToInt(damage * 0.1f);  // 10% 체력 피해
-        float staminaDamage = damage * 0.9f;  // 90% 스태미나 피해
+        // ?? ?: ??? 10% ??? + ??? 90%? ????? ??
+        int healthDamage = Mathf.RoundToInt(damage * 0.1f);  // 10% ?? ??
+        float staminaDamage = damage * 0.9f;  // 90% ???? ??
         
-        // 체력 피해 처리
+        // ?? ?? ??
         if (healthDamage > 0)
         {
             player.Health.TakeDamageDirectly(healthDamage);
         }
         
-        // 스태미나 피해 처리
+        // ???? ?? ??
         if (staminaDamage > 0)
         {
             player.StatsManager.UseStamina(staminaDamage);
         }
         
-        Debug.Log($"방어 성공! 체력: -{healthDamage}, 스태미나: -{staminaDamage:F1}");
+        Debug.Log($"?? ??! ??: -{healthDamage}, ????: -{staminaDamage:F1}");
     }
 }

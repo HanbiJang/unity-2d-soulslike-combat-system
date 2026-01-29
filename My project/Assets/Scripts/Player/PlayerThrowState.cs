@@ -35,7 +35,7 @@ public class PlayerThrowState : PlayerState
         }
         else
         {
-            Debug.LogWarning("PlayerStatsSO�� projectilePrefab�� �Ҵ���� �ʾҽ��ϴ�!");
+            Debug.LogWarning("PlayerStatsSO에 projectilePrefab이 설정되지 않았습니다!");
         }
     }
 }

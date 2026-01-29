@@ -14,6 +14,12 @@ public class EnemyEnrageState : EnemyState
         base.Enter();
         enrageStartTime = Time.time;
 
+        // 각성 사운드 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.EnemyEnrage);
+        }
+
         // 분노 상태: 이동 속도와 공격 속도 증가
         originalMoveSpeed = enemy.moveSpeed;
         originalRushSpeed = enemy.rushSpeed;
