@@ -16,15 +16,14 @@ MonoBehaviour:
   autoPlayDelay: 3
   dialogueLines:
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uC80A\uC74C\uC740 \uD798\uC774\uB77C \uBBFF\uC5C8\uC9C0. \uADF8\uB798\uC11C
-      \uAE30\uB85D\uC790\uB4E4\uC740 \uB098\uB97C \uBE44\uC6C3\uC5C8\uB2E4"
+    dialogueText: "\uC80A\uC74C\uC740 \uD798\uC774\uB77C \uBBFF\uC5C8\uC9C0. "
     target: 0
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uC218\uB9CE\uC740 \uC601\uC6C5\uC774 \uB098\uB97C \uB118\uC5B4
-      \uBBF8\uB798\uB85C \uD5A5\uD588\uACE0, \uBAA8\uB450 \uC0AC\uB77C\uC84C\uB2E4."
+    dialogueText: "\uC218\uB9CE\uC740 \uC601\uC6C5\uC774 \uB098\uB97C \uB118\uC9C0
+      \uBABB\uD588\uB2E4."
     target: 0
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uB098\uC758 \uC591\uBD84\uC774 \uB418\uAC70\uB77C..."
+    dialogueText: "\uB098\uC758 \uC591\uBD84\uC774 \uB418\uAC70\uB77C."
     target: 0
   - speakerName: "\uD310\uACB0\uC790"
     dialogueText: "\uC544\uC9C1\uB3C4 \uC228\uC744 \uC26C\uB294\uAD70"
