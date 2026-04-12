@@ -1,9 +1,4 @@
-# ⚔️ Soulslike-Portfolio
-
-> Unity로 제작한 2D 소울라이크 액션 RPG 포트폴리오 프로젝트입니다.
-> 전투 시스템 설계 및 구현 역량을 보여주기 위해 제작하였습니다.
-
----
+<img width="882" height="492" alt="Image" src="https://github.com/user-attachments/assets/eff466d4-7124-46f4-a0cd-38039561954b" />
 
 ## 🎮 프로젝트 개요
 
