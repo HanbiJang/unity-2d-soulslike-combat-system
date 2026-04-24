@@ -12,16 +12,23 @@ public class EnemyHitState : EnemyState
         base.Enter();
         hitStartTime = Time.time;
         enemy.SetVelocityX(0);
+        enemy.IsSuperArmor = false;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        // ChaseState로 돌아가는 찰나를 보호
+        enemy.IsSuperArmor = true;
+        enemy.superArmorEndTime = float.MaxValue;
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
 
-        // 피격 시간이 지나면 추적 상태로
         if (Time.time >= hitStartTime + hitDuration)
         {
-            // 각성 상태가 되어야 하고, 각성 애니메이션을 아직 재생하지 않았으면 각성 애니메이션 재생
             if (enemy.isEnraged && !enemy.hasPlayedEnrageAnimation)
             {
                 enemy.hasPlayedEnrageAnimation = true;

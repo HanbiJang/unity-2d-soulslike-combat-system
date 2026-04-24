@@ -20,6 +20,10 @@ public class CameraController : MonoBehaviour
     [Tooltip("카메라가 이동할 수 있는 최대 좌표(우측, 상단)입니다.")]
     [SerializeField] private Vector2 maxBounds;
 
+    [Header("Dialogue Camera")]
+    [Tooltip("대화 중 화자 전환 시 카메라 이동 속도 (작을수록 빠름)")]
+    [SerializeField] private float dialogueSmoothTime = 0.5f;
+
     private Vector3 velocity = Vector3.zero;
     private Vector3 lookAheadVelocity = Vector3.zero;
     private Vector3 lookAheadOffset;
@@ -28,7 +32,8 @@ public class CameraController : MonoBehaviour
     private Vector3 shakeOffset;
     private float shakeTimeRemaining;
     private float shakeIntensity;
-    private Transform originalTarget; // 원래 타겟 저장 (대화 종료 후 복원용)
+    private Transform originalTarget;
+    private bool isInDialogueMode = false;
 
     private void Awake()
     {
@@ -64,7 +69,17 @@ public class CameraController : MonoBehaviour
                 shakeIntensity = 0f;
             }
         }
-        transform.position = targetPosition + shakeOffset;
+
+        if (isInDialogueMode)
+        {
+            Vector3 basePos = Vector3.SmoothDamp(transform.position - shakeOffset, targetPosition, ref velocity, dialogueSmoothTime);
+            transform.position = basePos + shakeOffset;
+        }
+        else
+        {
+            velocity = Vector3.zero;
+            transform.position = targetPosition + shakeOffset;
+        }
         ApplyBounds();
     }
     public void TriggerShake(float intensity, float duration)
@@ -93,26 +108,25 @@ public class CameraController : MonoBehaviour
         if (newTarget != null)
         {
             target = newTarget;
+            isInDialogueMode = true;
         }
         else
         {
-            // null이면 원래 타겟으로 복원
             if (originalTarget != null)
             {
                 target = originalTarget;
             }
+            isInDialogueMode = false;
         }
     }
 
-    /// <summary>
-    /// 원래 타겟으로 복원합니다.
-    /// </summary>
     public void RestoreOriginalTarget()
     {
         if (originalTarget != null)
         {
             target = originalTarget;
         }
+        isInDialogueMode = false;
     }
 
     private void OnDrawGizmosSelected()

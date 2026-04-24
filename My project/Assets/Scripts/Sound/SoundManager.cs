@@ -108,6 +108,8 @@ public class SoundManager : MonoBehaviour
         // 사운드 피치 딕셔너리 초기화 (기본값)
         soundPitchDictionary[SoundType.PlayerFootstep] = 1.5f;      // 발소리 50% 빠르게
         soundPitchDictionary[SoundType.WeaponSwing] = 1.4f;         // 무기 휘두르는 소리 40% 빠르게
+        soundPitchDictionary[SoundType.ParrySuccess] = 1.0f;        // 패링 성공
+        soundPitchDictionary[SoundType.ParryBlock] = 0.9f;          // 일반 가드 (둔탁하게)
         soundPitchDictionary[SoundType.WeaponHitFlesh] = 1.2f;      // 타격 소리 20% 빠르게
         soundPitchDictionary[SoundType.WeaponHitMetal] = 1.2f;
         soundPitchDictionary[SoundType.WeaponHitWood] = 1.2f;

@@ -9,6 +9,7 @@ public class EnemyMeleeAttackState : EnemyState
     /// <summary>공격 타격 시점(초). 애니메이션 이벤트 없이 이 시점에 데미지 적용.</summary>
     private const float AttackHitTime = 0.35f;
 
+
     // 패링 가능 타이밍 설정
     private const float ParryWindowStart = 0.15f;  // 패링 가능 시작 시간
     private const float ParryWindowEnd = 0.6f;     // 패링 가능 종료 시간 (더 길게)
@@ -21,7 +22,7 @@ public class EnemyMeleeAttackState : EnemyState
     private Color parryColor = new Color(1f, 0.3f, 0.3f, 1f); // 붉은 색
 
     // 1페이즈 공격 애니메이션 (일반 상태)
-    private readonly string[] phase1Attacks = { "Attack1_2", "Attack2+2", "Attack3_2" };
+    private readonly string[] phase1Attacks = { "Attack1", "Attack2", "Attack3"};
     
     // 2페이즈 공격 애니메이션 (각성 상태)
     private readonly string[] phase2Attacks = { "Attack1_2", "Attack2+2", "Attack3_2", "JumpAttack_2" };
@@ -39,6 +40,8 @@ public class EnemyMeleeAttackState : EnemyState
         targetTimeScale = 1f;
         targetColor = Color.white;
         enemy.SetVelocityX(0);
+        enemy.IsSuperArmor = true;
+        enemy.superArmorEndTime = float.MaxValue;
 
         // 플레이어 방향으로 바라보기
         if (enemy.playerTarget != null)
@@ -113,6 +116,7 @@ public class EnemyMeleeAttackState : EnemyState
             targetTimeScale = SlowMotionScale;
             targetColor = parryColor;
             Time.timeScale = SlowMotionScale; // 슬로우 모션 즉시 적용
+            SlowMotionEffects.Instance?.SetSlowMotion(true);
             Debug.Log("패링 윈도우 시작!");
         }
         else if (!isInParryWindow && wasInParryWindow)
@@ -120,6 +124,7 @@ public class EnemyMeleeAttackState : EnemyState
             // 패링 윈도우 종료
             targetTimeScale = 1f;
             targetColor = Color.white;
+            SlowMotionEffects.Instance?.SetSlowMotion(false);
             Debug.Log("패링 윈도우 종료!");
         }
         
@@ -170,6 +175,7 @@ public class EnemyMeleeAttackState : EnemyState
     public override void Exit()
     {
         base.Exit();
+        enemy.IsSuperArmor = false;
         ResetTimeAndColor();
     }
 
@@ -236,7 +242,8 @@ public class EnemyMeleeAttackState : EnemyState
         Time.timeScale = 1f;
         targetTimeScale = 1f;
         targetColor = Color.white;
-        
+        SlowMotionEffects.Instance?.SetSlowMotion(false);
+
         if (enemy.SpriteRenderer != null)
         {
             enemy.SpriteRenderer.color = Color.white;

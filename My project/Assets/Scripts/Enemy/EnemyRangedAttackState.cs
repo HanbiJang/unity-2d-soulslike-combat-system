@@ -68,17 +68,29 @@ public class EnemyRangedAttackState : EnemyState
     {
         if (enemy.playerTarget == null) return;
 
-        // 원거리 공격 사운드 재생
         if (SoundManager.Instance != null)
-        {
             SoundManager.Instance.PlaySFX(SoundType.EnemyAttack);
+
+        if (enemy.projectilePrefab == null)
+        {
+            Debug.LogWarning("EnemyController에 projectilePrefab이 설정되지 않았습니다!");
+            return;
         }
 
-        // 원거리 투사체 발사 로직
-        // 여기에 투사체 생성 코드 추가
-        // 예: Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        
-        Debug.Log("원거리 공격 발사!");
+        Vector3 spawnPos = enemy.transform.position + new Vector3(enemy.IsFacingRight ? 0.5f : -0.5f, 0.3f, 0f);
+        GameObject obj = Object.Instantiate(enemy.projectilePrefab, spawnPos, Quaternion.identity);
+
+        EnemyProjectile projectile = obj.GetComponent<EnemyProjectile>();
+        if (projectile != null)
+        {
+            Vector2 dir = (enemy.playerTarget.position - enemy.transform.position).normalized;
+            projectile.damage = enemy.attackDamage;
+
+            Collider2D[] enemyColliders = enemy.GetComponents<Collider2D>();
+            PlayerStatsSO stats = enemy.playerTarget.GetComponent<PlayerController>()?.stats;
+            LayerMask ground = stats != null ? stats.groundLayer : default;
+            projectile.Launch(dir, enemyColliders, ground);
+        }
     }
 }
 

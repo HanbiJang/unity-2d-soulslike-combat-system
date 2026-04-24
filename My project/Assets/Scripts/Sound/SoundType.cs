@@ -14,6 +14,10 @@ public enum SoundType
     EnemyDeath,          // 적이 죽을 때 음성
     EnemyEnrage,         // 보스 각성 (2페이즈) 음성
     
+    // 패링 사운드
+    ParrySuccess,       // 패링 성공 (적 공격을 정확히 튕겨냄)
+    ParryBlock,         // 패링 실패 / 일반 가드 (스태미나+체력 감소)
+
     // 무기 사운드
     WeaponSwing,        // 무기 휘두르는 소리 (타격하지 않은 경우)
     WeaponHitFlesh,     // 타격 소리 - 살/육체

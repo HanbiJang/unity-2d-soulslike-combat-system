@@ -36,7 +36,7 @@ MonoBehaviour:
   wallJumpForce: {x: 8, y: 16}
   dashSpeed: 12
   dashTime: 0.4
-  dashCooldown: 1
+  dashCooldown: 0.5
   dashAttackData:
     animationName: ATTACK 1
     attackDuration: 0.8
@@ -53,42 +53,43 @@ MonoBehaviour:
   - animationName: ATTACK 1
     attackDuration: 0.5
     attackPointOffset: {x: 0.2, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2.7, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackPointOffset: {x: 2.02, y: -1.39}
+    groundAttackBoxSize: {x: 4.51, y: 2.98}
+    airAttackPointOffset: {x: 2.02, y: -1.05}
+    airAttackBoxSize: {x: 4.51, y: 3.39}
     groundAttackDamage: 7
     airAttackDamage: 7
   - animationName: ATTACK 2
     attackDuration: 0.5
     attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2.7, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackPointOffset: {x: 2.02, y: -1.39}
+    groundAttackBoxSize: {x: 4.51, y: 2.98}
+    airAttackPointOffset: {x: 2.02, y: -1.05}
+    airAttackBoxSize: {x: 4.51, y: 3.39}
     groundAttackDamage: 1
     airAttackDamage: 1
   - animationName: ATTACK 3
     attackDuration: 0.5
     attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 2.5, y: 2}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 2.5, y: 3}
+    groundAttackPointOffset: {x: 2.02, y: -1.39}
+    groundAttackBoxSize: {x: 4.51, y: 3.39}
+    airAttackPointOffset: {x: 2.02, y: -1.05}
+    airAttackBoxSize: {x: 4.51, y: 3.39}
     groundAttackDamage: 1
     airAttackDamage: 1
   airAttackData:
     animationName: attack
     attackDuration: 0.4
     attackPointOffset: {x: 0.5, y: 0.5}
-    groundAttackPointOffset: {x: 0.19, y: 0.5}
-    groundAttackBoxSize: {x: 2.7, y: 3}
-    airAttackPointOffset: {x: 0.19, y: -0.5}
-    airAttackBoxSize: {x: 2.7, y: 3}
+    groundAttackPointOffset: {x: 2.02, y: -1.39}
+    groundAttackBoxSize: {x: 4.51, y: 2.98}
+    airAttackPointOffset: {x: 2.02, y: -1.05}
+    airAttackBoxSize: {x: 4.51, y: 3.39}
     groundAttackDamage: 9
     airAttackDamage: 9
   airAttackMoveSpeedMultiplier: 0.5
   runDirectionGraceTime: 0.5
+  runHoldThreshold: 0.2
   parryWindow: 0.2
   maxHealCharges: 5
   healAmount: 60
@@ -104,10 +105,10 @@ MonoBehaviour:
     animationName: SPECIAL ATTACK
     attackDuration: 1.2
     attackPointOffset: {x: 0.5, y: 1}
-    groundAttackPointOffset: {x: 1, y: 0}
-    groundAttackBoxSize: {x: 3, y: 3}
-    airAttackPointOffset: {x: 1, y: -0.5}
-    airAttackBoxSize: {x: 3, y: 3}
+    groundAttackPointOffset: {x: 2.02, y: -1.39}
+    groundAttackBoxSize: {x: 4.51, y: 2.98}
+    airAttackPointOffset: {x: 2.02, y: -1.05}
+    airAttackBoxSize: {x: 4.51, y: 3.39}
     groundAttackDamage: 1
     airAttackDamage: 1
   invincibilityDuration: 0.55

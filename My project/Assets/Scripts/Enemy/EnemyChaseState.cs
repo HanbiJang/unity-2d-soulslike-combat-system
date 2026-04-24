@@ -76,10 +76,23 @@ public class EnemyChaseState : EnemyState
 
         float distance = enemy.GetDistanceToPlayer();
 
-        // 행동 딜레이 체크 (긴급 상황 제외)
+        // 우선순위 1: 공격 범위 안 → 즉시 공격 (딜레이 없음)
+        if (distance <= enemy.attackRange)
+        {
+            enemy.SetVelocityX(0f);
+            enemy.IsSuperArmor = true;
+            enemy.superArmorEndTime = float.MaxValue;
+            if (enemy.IsPlayerAttacking() && distance <= 3f)
+                stateMachine.ChangeState(enemy.ParryState);
+            else
+                stateMachine.ChangeState(enemy.MeleeAttackState);
+            return;
+        }
+
+        // 행동 딜레이 체크 (특수 행동에만 적용)
         bool canAct = enemy.CanPerformAction();
 
-        // 우선순위 1: 플레이어가 회복 시도하면 → 돌진 (긴급 상황, 딜레이 무시)
+        // 우선순위 2: 플레이어가 회복 시도하면 → 돌진 (딜레이 무시)
         if (enemy.IsPlayerHealing())
         {
             enemy.ResetActionDelay();
@@ -88,7 +101,7 @@ public class EnemyChaseState : EnemyState
             return;
         }
 
-        // 우선순위 2: 플레이어가 8m 이상 멀어지면 → 돌진
+        // 우선순위 3: 플레이어가 멀면 → 돌진
         if (canAct && distance >= enemy.rushTriggerDistance && Time.time >= enemy.lastRushTime + enemy.rushCooldown)
         {
             enemy.lastRushTime = Time.time;
@@ -96,29 +109,14 @@ public class EnemyChaseState : EnemyState
             return;
         }
 
-        // 우선순위 3: 플레이어가 가드 중이면 → 공격 안 함/뒤로 물러남
+        // 우선순위 4: 플레이어가 가드 중이면 → 뒤로 물러남
         if (canAct && enemy.IsPlayerDefending())
         {
             stateMachine.ChangeState(enemy.BackAwayState);
             return;
         }
 
-        // 우선순위 4: 플레이어가 공격 범위 안(2m 이내) → 근접 공격
-        if (canAct && distance <= enemy.attackRange)
-        {
-            // 플레이어가 가까이 있고 + 공격 중이면 → 패링
-            if (enemy.IsPlayerAttacking() && distance <= 3f)
-            {
-                stateMachine.ChangeState(enemy.ParryState);
-            }
-            else
-            {
-                stateMachine.ChangeState(enemy.MeleeAttackState);
-            }
-            return;
-        }
-
-        // 우선순위 5: 플레이어가 10m 이상 멀어지면 → 원거리 공격
+        // 우선순위 5: 플레이어가 멀면 → 원거리 공격
         if (canAct && distance >= enemy.rangedAttackDistance && Time.time >= enemy.lastRangedAttackTime + enemy.rangedAttackCooldown)
         {
             enemy.lastRangedAttackTime = Time.time;

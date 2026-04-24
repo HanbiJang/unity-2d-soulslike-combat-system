@@ -27,12 +27,15 @@ public class EnemyEnrageState : EnemyState
         enemy.rushSpeed *= 1.3f;
         enemy.rushCooldown *= 0.7f; // 쿨다운 감소
 
+        enemy.IsSuperArmor = true;
+        enemy.superArmorEndTime = float.MaxValue; // 타이머 만료 없이 Exit()에서만 해제
         Debug.Log("보스 분노 상태 전환! (2페이즈)");
     }
 
     public override void Exit()
     {
         base.Exit();
+        enemy.IsSuperArmor = false;
         // 분노 상태 종료 시 원래 속도로 복구하지 않음 (계속 유지)
     }
 

@@ -20,6 +20,8 @@ public class PlayerHitState : PlayerState
         {
             SoundManager.Instance.PlaySFX(SoundType.PlayerHit);
         }
+
+        EffectManager.Instance?.PlayPlayerHitEffect(player.Rb.position);
     }
 
     public override void LogicUpdate()

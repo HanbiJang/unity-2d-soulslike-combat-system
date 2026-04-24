@@ -63,6 +63,8 @@ public class PlayerStatsSO : ScriptableObject
     [Header("달리기 입력 관성")]
     [Tooltip("방향키가 잠깐 0이 되어도 달리기를 유지할 허용 시간(초)")]
     public float runDirectionGraceTime = 0.1f;
+    [Tooltip("이 시간(초) 이상 쉬프트를 누르면 달리기, 미만이면 회피")]
+    public float runHoldThreshold = 0.2f;
 
     [Header("방어 & 패링")]
     public float parryWindow = 0.15f;

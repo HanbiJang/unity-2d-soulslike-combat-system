@@ -19,6 +19,9 @@ public class DialogueSystem : MonoBehaviour
     [SerializeField] private Image continueImage;
     [SerializeField] private float fadeSpeed = 2f; // 페이드인아웃 속도
 
+    [Header("화면 페이드 UI")]
+    [SerializeField] private Image screenFadeImage; // 전체 화면 덮는 검정 Image
+
     [Header("참조")]
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform enemyTransform;
@@ -30,6 +33,9 @@ public class DialogueSystem : MonoBehaviour
     private bool canContinue = false;
     private PlayerController playerController;
     private Coroutine fadeCoroutine; // 페이드인아웃 코루틴 참조
+    private Coroutine screenFadeCoroutine;
+    private bool fadeOutOnEnd = false;
+    private bool fadeOutOnStart = false;
 
     private void Awake()
     {
@@ -90,6 +96,15 @@ public class DialogueSystem : MonoBehaviour
             color.a = 0f;
             continueImage.color = color;
         }
+
+        // 화면 페이드 이미지 초기화 (투명하게)
+        if (screenFadeImage != null)
+        {
+            Color c = screenFadeImage.color;
+            c.a = 0f;
+            screenFadeImage.color = c;
+            screenFadeImage.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
@@ -97,7 +112,8 @@ public class DialogueSystem : MonoBehaviour
         // 씬 시작 시 대화 재생
         if (startDialogue != null && startDialogue.dialogueLines.Length > 0)
         {
-            StartDialogue(startDialogue);
+            // 시작 시 페이드 아웃, 종료 시 페이드 없음
+            StartDialogue(startDialogue, fadeOutOnEnd: false, fadeOutOnStart: true);
         }
     }
 
@@ -114,7 +130,7 @@ public class DialogueSystem : MonoBehaviour
         }
     }
 
-    public void StartDialogue(DialogueData dialogue)
+    public void StartDialogue(DialogueData dialogue, bool fadeOutOnEnd = false, bool fadeOutOnStart = false)
     {
         if (dialogue == null || dialogue.dialogueLines.Length == 0) return;
 
@@ -122,14 +138,27 @@ public class DialogueSystem : MonoBehaviour
         currentDialogueIndex = 0;
         isDialogueActive = true;
         canContinue = false;
+        this.fadeOutOnEnd = fadeOutOnEnd;
+        this.fadeOutOnStart = fadeOutOnStart;
 
-        // 컷씬 시작 시 모든 적이 플레이어를 바라보도록
         FaceAllEnemiesTowardPlayer();
-
-        // 플레이어 입력 비활성화
         DisablePlayerInput();
 
-        // 첫 번째 대화 표시
+        if (fadeOutOnStart && screenFadeImage != null)
+        {
+            StartCoroutine(StartDialogueWithFade());
+        }
+        else
+        {
+            ShowDialogueLine(0);
+        }
+    }
+
+    private IEnumerator StartDialogueWithFade()
+    {
+        // 페이드 인
+        yield return StartCoroutine(FadeScreen(1f, 0f, currentDialogue.screenFadeDuration));
+
         ShowDialogueLine(0);
     }
 
@@ -268,32 +297,57 @@ public class DialogueSystem : MonoBehaviour
         isDialogueActive = false;
         canContinue = false;
 
-        // 페이드인아웃 애니메이션 중지
         StopFadeAnimation();
 
-        // 모든 말풍선 숨기기
-        if (playerBubble != null)
-        {
-            playerBubble.HideDialogue();
-        }
-        if (enemyBubble != null)
-        {
-            enemyBubble.HideDialogue();
-        }
+        if (playerBubble != null) playerBubble.HideDialogue();
+        if (enemyBubble != null) enemyBubble.HideDialogue();
 
-        if (continuePrompt != null)
-        {
-            continuePrompt.SetActive(false);
-        }
+        if (continuePrompt != null) continuePrompt.SetActive(false);
 
-        // 카메라를 원래 타겟(플레이어)으로 복원
-        if (cameraController != null)
+        if (fadeOutOnEnd && screenFadeImage != null)
         {
-            cameraController.RestoreOriginalTarget();
+            StartCoroutine(EndDialogueWithFade());
         }
+        else
+        {
+            FinishEndDialogue();
+        }
+    }
 
-        // 플레이어 입력 활성화
+    private IEnumerator EndDialogueWithFade()
+    {
+        // 페이드 아웃 (투명 → 검정)
+        yield return StartCoroutine(FadeScreen(0f, 1f, currentDialogue.screenFadeDuration));
+
+        FinishEndDialogue();
+    }
+
+    private void FinishEndDialogue()
+    {
+        if (cameraController != null) cameraController.RestoreOriginalTarget();
         EnablePlayerInput();
+    }
+
+    private IEnumerator FadeScreen(float from, float to, float duration)
+    {
+        screenFadeImage.gameObject.SetActive(true);
+
+        float elapsed = 0f;
+        Color c = screenFadeImage.color;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            c.a = Mathf.Lerp(from, to, elapsed / duration);
+            screenFadeImage.color = c;
+            yield return null;
+        }
+        c.a = to;
+        screenFadeImage.color = c;
+
+        if (to <= 0f)
+        {
+            screenFadeImage.gameObject.SetActive(false);
+        }
     }
 
     private void DisablePlayerInput()

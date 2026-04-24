@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
     private Vector3 originalVisualsPosition; private Vector3 originalVisualsScale;
+    private float shiftHoldDuration;
 
 
     public void AnimationTrigger()
@@ -149,12 +150,19 @@ public class PlayerController : MonoBehaviour
 
         Input = new Vector2(UnityEngine.Input.GetAxisRaw("Horizontal"), UnityEngine.Input.GetAxisRaw("Vertical"));
         if (UnityEngine.Input.GetButtonDown("Jump")) StartCoroutine(JumpInputStopRoutine());
-        if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) StartCoroutine(DashInputStopRoutine());
+        if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) shiftHoldDuration = 0f;
+        if (UnityEngine.Input.GetKey(KeyCode.LeftShift)) shiftHoldDuration += Time.deltaTime;
+        if (UnityEngine.Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            if (shiftHoldDuration < stats.runHoldThreshold && Mathf.Abs(Input.x) > 0f)
+                StartCoroutine(DashInputStopRoutine());
+            shiftHoldDuration = 0f;
+        }
         if (UnityEngine.Input.GetKeyDown(KeyCode.Z) || UnityEngine.Input.GetMouseButtonDown(0)) StartCoroutine(AttackInputStopRoutine());
 
-        IsRunInput = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+        IsRunInput = UnityEngine.Input.GetKey(KeyCode.LeftShift) && shiftHoldDuration >= stats.runHoldThreshold;
         IsDefendInput = UnityEngine.Input.GetKey(KeyCode.Mouse1); IsHealInput = UnityEngine.Input.GetKeyDown(KeyCode.R);
-        IsThrowInput = UnityEngine.Input.GetKeyDown(KeyCode.F);
+        //IsThrowInput = UnityEngine.Input.GetKeyDown(KeyCode.F);
         IsSpecialAttackInput = UnityEngine.Input.GetKeyDown(KeyCode.Q);
 
         StateMachine.CurrentState.LogicUpdate();
@@ -222,13 +230,13 @@ public class PlayerController : MonoBehaviour
         {
             if (!processedEnemies.Contains(hit.collider))
             {
-                ProcessHit(hit.collider, damage);
+                ProcessHit(hit.collider, damage, hit.centroid);
                 processedEnemies.Add(hit.collider);
             }
         }
     }
 
-    private void ProcessHit(Collider2D enemyCollider, int damage)
+    private void ProcessHit(Collider2D enemyCollider, int damage, Vector2 hitPoint)
     {
         Enemy enemyComponent = enemyCollider.GetComponent<Enemy>();
         if (enemyComponent != null)
@@ -239,10 +247,11 @@ public class PlayerController : MonoBehaviour
                 cam.TriggerShake(stats.cameraShakeOnHitIntensity, stats.cameraShakeOnHitDuration);
             }
             enemyComponent.TakeDamage(damage);
-            
+
+            EffectManager.Instance?.PlayEnemyHitEffect(hitPoint);
+
             // 타격 사운드 재생 (재질별)
             MaterialType hitMaterial = enemyComponent.materialType;
-            
             if (SoundManager.Instance != null)
             {
                 SoundManager.Instance.PlayWeaponHitSound(hitMaterial);
@@ -318,27 +327,51 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (stats == null) return;
+
+        Vector2 origin = Application.isPlaying && Rb != null ? Rb.position : (Vector2)transform.position;
+        bool facingRight = Application.isPlaying ? IsFacingRight : true;
+        float dirMult = facingRight ? 1f : -1f;
+
         if (GroundCheck != null)
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawLine(GroundCheck.position, new Vector3(GroundCheck.position.x, GroundCheck.position.y - stats.groundCheckDistance, GroundCheck.position.z));
         }
 
-        if (Application.isPlaying && stats != null && stats.attackChain.Length > 0)
+        // 지상 공격 (빨강 계열), 공중 공격 (파랑 계열)
+        // attackChain 전체 표시
+        if (stats.attackChain != null)
         {
-            AttackData representativeAttack = stats.attackChain[0];
+            for (int i = 0; i < stats.attackChain.Length; i++)
+            {
+                AttackData atk = stats.attackChain[i];
+                float alpha = 1f - (float)i / Mathf.Max(stats.attackChain.Length, 1) * 0.5f;
 
-            Vector2 groundAttackPointOffset = representativeAttack.groundAttackPointOffset;
-            Vector2 groundAttackBoxSize = representativeAttack.groundAttackBoxSize;
-            Vector2 groundAttackPointPos = (Vector2)Rb.position + new Vector2(groundAttackPointOffset.x * (IsFacingRight ? 1 : -1), groundAttackPointOffset.y);
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(groundAttackPointPos, groundAttackBoxSize);
+                Vector2 groundPos = origin + new Vector2(atk.groundAttackPointOffset.x * dirMult, atk.groundAttackPointOffset.y);
+                Gizmos.color = new Color(1f, 0.2f + 0.2f * i, 0f, alpha);
+                Gizmos.DrawWireCube(groundPos, atk.groundAttackBoxSize);
 
-            Vector2 airAttackPointOffset = representativeAttack.airAttackPointOffset;
-            Vector2 airAttackBoxSize = representativeAttack.airAttackBoxSize;
-            Vector2 airAttackPointPos = (Vector2)Rb.position + new Vector2(airAttackPointOffset.x * (IsFacingRight ? 1 : -1), airAttackPointOffset.y);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireCube(airAttackPointPos, airAttackBoxSize);
+                Vector2 airPos = origin + new Vector2(atk.airAttackPointOffset.x * dirMult, atk.airAttackPointOffset.y);
+                Gizmos.color = new Color(0.2f * i, 0.4f, 1f, alpha);
+                Gizmos.DrawWireCube(airPos, atk.airAttackBoxSize);
+            }
+        }
+
+        // 특수 공격
+        if (stats.specialAttackData != null)
+        {
+            Vector2 pos = origin + new Vector2(stats.specialAttackData.groundAttackPointOffset.x * dirMult, stats.specialAttackData.groundAttackPointOffset.y);
+            Gizmos.color = new Color(0.8f, 0f, 1f, 0.8f);
+            Gizmos.DrawWireCube(pos, stats.specialAttackData.groundAttackBoxSize);
+        }
+
+        // 공중 공격 단독
+        if (stats.airAttackData != null)
+        {
+            Vector2 pos = origin + new Vector2(stats.airAttackData.airAttackPointOffset.x * dirMult, stats.airAttackData.airAttackPointOffset.y);
+            Gizmos.color = new Color(0f, 0.8f, 1f, 0.8f);
+            Gizmos.DrawWireCube(pos, stats.airAttackData.airAttackBoxSize);
         }
     }
 }

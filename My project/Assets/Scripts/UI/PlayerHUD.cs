@@ -6,6 +6,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Image staminaFillImage;
     [SerializeField] private Text throwChargesText;
+    [SerializeField] private Text healChargesText;
     [SerializeField] private float fillLerpSpeed = 8f;
 
     private void Awake()
@@ -34,17 +35,15 @@ public class PlayerHUD : MonoBehaviour
                 float s = player.StatsManager != null ? player.StatsManager.CurrentStamina / player.stats.maxStamina : 0f;
                 staminaFillImage.fillAmount = s;
             }
-            if (throwChargesText != null)
-            {
-                UpdateThrowChargesText();
-            }
+            if (throwChargesText != null) UpdateThrowChargesText();
+            if (healChargesText != null) UpdateHealChargesText();
         }
     }
 
     private void Update()
     {
         if (player == null) return;
- 
+
         if (healthFillImage != null && player.Health != null)
         {
             float target = (float)player.Health.CurrentHealth / player.stats.maxHealth;
@@ -55,19 +54,23 @@ public class PlayerHUD : MonoBehaviour
             float target = player.StatsManager.CurrentStamina / player.stats.maxStamina;
             staminaFillImage.fillAmount = Mathf.Lerp(staminaFillImage.fillAmount, target, Time.deltaTime * fillLerpSpeed);
         }
-        
-        if (throwChargesText != null && player.StatsManager != null)
-        {
-            UpdateThrowChargesText();
-        }
+        if (throwChargesText != null && player.StatsManager != null) UpdateThrowChargesText();
+        if (healChargesText != null && player.StatsManager != null) UpdateHealChargesText();
     }
-    
+
     private void UpdateThrowChargesText()
     {
         if (player == null || player.StatsManager == null || throwChargesText == null) return;
-        
         int current = player.StatsManager.CurrentThrowCharges;
         int max = player.stats.maxThrowCharges;
         throwChargesText.text = $"수리검: {current}/{max}";
+    }
+
+    private void UpdateHealChargesText()
+    {
+        if (player == null || player.StatsManager == null || healChargesText == null) return;
+        int current = player.StatsManager.CurrentHealCharges;
+        int max = player.stats.maxHealCharges;
+        healChargesText.text = $"회복약: {current}/{max}";
     }
 }

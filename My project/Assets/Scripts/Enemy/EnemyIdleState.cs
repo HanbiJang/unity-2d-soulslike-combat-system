@@ -14,11 +14,7 @@ public class EnemyIdleState : EnemyState
     {
         base.LogicUpdate();
 
-        // 플레이어가 죽었으면 아무것도 하지 않음
-        if (enemy.IsPlayerDead())
-        {
-            return;
-        }
+        if (enemy.IsPlayerDead()) return;
 
         // 전투 중이면 추적 상태로
         if (enemy.isInCombat)
@@ -26,13 +22,6 @@ public class EnemyIdleState : EnemyState
             stateMachine.ChangeState(enemy.ChaseState);
             return;
         }
-
-        // // 플레이어가 감지 범위 안에 들어오면 추적 시작
-        // if (enemy.GetDistanceToPlayer() <= enemy.detectionRange)
-        // {
-        //     stateMachine.ChangeState(enemy.ChaseState);
-        //     return;
-        // }
     }
 }
 

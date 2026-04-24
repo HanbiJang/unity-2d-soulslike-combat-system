@@ -79,6 +79,12 @@ public class PlayerDefendState : PlayerState
                 Debug.Log("?? ????? ??: DEFEND 1");
             }
             
+            // 패링 성공 사운드
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(SoundType.ParrySuccess);
+            }
+
             // ?? ?? ?? ??
             ParryEffect parryEffect = player.GetComponent<ParryEffect>();
             if (parryEffect != null)
@@ -89,11 +95,19 @@ public class PlayerDefendState : PlayerState
             {
                 Debug.LogWarning("ParryEffect ????? ?? ? ????!");
             }
-            
+            Vector2 parryPos = new Vector2(player.transform.position.x, player.transform.position.y * 1.6f);
+            EffectManager.Instance?.PlayParryEffect(parryPos);
+
             // ?? ?? ? ?? ??
             return;
         }
         
+        // 일반 가드 사운드 (패링 실패)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundType.ParryBlock);
+        }
+
         // ?? ?: ??? 10% ??? + ??? 90%? ????? ??
         int healthDamage = Mathf.RoundToInt(damage * 0.1f);  // 10% ?? ??
         float staminaDamage = damage * 0.9f;  // 90% ???? ??

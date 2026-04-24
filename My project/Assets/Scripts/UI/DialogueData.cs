@@ -26,10 +26,17 @@ public class DialogueData : ScriptableObject
     [Header("대화 설정")]
     [Tooltip("대화가 자동으로 진행되는지 (false면 클릭/키 입력 필요)")]
     public bool autoPlay = false;
-    
+
     [Tooltip("자동 진행 시 각 대사 표시 시간")]
     public float autoPlayDelay = 3f;
-    
+
+/*    [Header("화면 페이드 설정")]
+    [Tooltip("대화 시작/종료 시 화면 페이드 사용 여부")]
+    public bool useScreenFade = true;*/
+
+    [Tooltip("화면 페이드 지속 시간(초)")]
+    public float screenFadeDuration = 0.8f;
+
     [Tooltip("대화 목록")]
     public DialogueLine[] dialogueLines = new DialogueLine[0];
 }

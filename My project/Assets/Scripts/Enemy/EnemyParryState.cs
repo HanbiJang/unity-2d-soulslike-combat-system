@@ -14,6 +14,14 @@ public class EnemyParryState : EnemyState
         parryStartTime = Time.time;
         hasParried = false;
         enemy.SetVelocityX(0);
+        enemy.IsSuperArmor = true;
+        enemy.superArmorEndTime = float.MaxValue;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        enemy.IsSuperArmor = false;
     }
 
     public override void LogicUpdate()

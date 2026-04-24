@@ -3,7 +3,8 @@ using UnityEngine;
 public class EnemyDeathState : EnemyState
 {
     private float deathStartTime;
-    private float deathDuration = 2f; // 사망 애니메이션 시간
+    private float deathDuration = 2f;
+    private bool dialogueTriggered = false;
 
     public EnemyDeathState(EnemyController enemy, string stateName) : base(enemy, stateName) { }
 
@@ -11,17 +12,16 @@ public class EnemyDeathState : EnemyState
     {
         base.Enter();
         deathStartTime = Time.time;
+        dialogueTriggered = false;
         enemy.SetVelocity(0, 0);
-        
-        // 죽음 사운드 재생
+
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlaySFX(SoundType.EnemyDeath);
         }
-        
+
         Debug.Log(enemy.gameObject.name + "가 처치되었습니다.");
-        
-        // 보스인 경우 BossHUD에서 해제
+
         if (enemy.IsBoss)
         {
             BossHUD.Instance?.UnregisterBoss(enemy);
@@ -31,11 +31,15 @@ public class EnemyDeathState : EnemyState
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        
-        // 사망 애니메이션 시간이 지나면 오브젝트 파괴
-        if (Time.time >= deathStartTime + deathDuration)
+
+        if (!dialogueTriggered && Time.time >= deathStartTime + deathDuration)
         {
-            Object.Destroy(enemy.gameObject);
+            dialogueTriggered = true;
+
+            if (enemy.deathDialogue != null && DialogueSystem.Instance != null)
+            {
+                DialogueSystem.Instance.StartDialogue(enemy.deathDialogue, fadeOutOnEnd: true);
+            }
         }
     }
 

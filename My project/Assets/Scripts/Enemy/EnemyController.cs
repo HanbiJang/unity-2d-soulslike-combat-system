@@ -21,6 +21,9 @@ public class EnemyController : Enemy
     
     [Tooltip("원거리 공격 쿨다운")]
     public float rangedAttackCooldown = 5f;
+
+    [Tooltip("원거리 공격 투사체 프리팹")]
+    public GameObject projectilePrefab;
     
     [Tooltip("이동 속도")]
     public float moveSpeed = 5f;
@@ -66,6 +69,10 @@ public class EnemyController : Enemy
     public EnemyHitState HitState { get; private set; }
     public EnemyDeathState DeathState { get; private set; }
 
+    [Header("사망 후 대화")]
+    [Tooltip("적이 죽고 나서 재생할 대화 데이터")]
+    public DialogueData deathDialogue;
+
     [Header("디버깅용")]
     [SerializeField] private string currentStateName;
 
@@ -92,7 +99,23 @@ public class EnemyController : Enemy
     public bool hasPlayedEnrageAnimation { get; set; } = false;
     
     public bool IsFacingRight { get; private set; } = true;
-    
+
+    /// <summary>슈퍼아머 활성 중이면 피격 시 HitState로 전환하지 않음</summary>
+    public bool IsSuperArmor { get; set; } = false;
+
+    [Header("강인도 설정")]
+    [Tooltip("이 횟수만큼 연속으로 맞으면 슈퍼아머 발동")]
+    public int superArmorHitThreshold = 3;
+    [Tooltip("슈퍼아머 지속 시간 (초)")]
+    public float superArmorDuration = 1.5f;
+
+    private int consecutiveHitCount = 0;
+    public float superArmorEndTime = -10f;
+
+    [Tooltip("HitState 재진입 방지 쿨다운 (초) — HitState 지속시간보다 길게 설정")]
+    public float hitStateCooldown = 0.8f;
+    private float lastHitStateTime = -10f;
+
     // 행동 딜레이 시스템
     private float lastActionTime = -10f;
     private float nextActionDelay = 0f;
@@ -390,9 +413,30 @@ public class EnemyController : Enemy
             StartCombat();
         }
 
-        // 피격 상태로 전환
-        if (StateMachine.CurrentState != HitState && StateMachine.CurrentState != DeathState)
+        // 슈퍼아머 만료 체크
+        if (IsSuperArmor && Time.time >= superArmorEndTime)
         {
+            IsSuperArmor = false;
+            consecutiveHitCount = 0;
+        }
+
+        // 연속 피격 카운트 → 임계값 도달 시 슈퍼아머 발동
+        if (!IsSuperArmor)
+        {
+            consecutiveHitCount++;
+            if (consecutiveHitCount >= superArmorHitThreshold)
+            {
+                IsSuperArmor = true;
+                superArmorEndTime = Time.time + superArmorDuration;
+                consecutiveHitCount = 0;
+            }
+        }
+
+        // 슈퍼아머 또는 쿨다운 중이면 경직 없이 데미지만 받음
+        bool hitCooldownActive = Time.time < lastHitStateTime + hitStateCooldown;
+        if (!IsSuperArmor && !hitCooldownActive && StateMachine.CurrentState != HitState && StateMachine.CurrentState != DeathState)
+        {
+            lastHitStateTime = Time.time;
             StateMachine.ChangeState(HitState);
         }
 
@@ -451,6 +495,25 @@ public class EnemyController : Enemy
         {
             StateMachine.ChangeState(DeathState);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        // 근접 공격 범위 (빨강)
+        Gizmos.color = new Color(1f, 0.2f, 0.2f, 0.8f);
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        // 감지 범위 (노랑)
+        Gizmos.color = new Color(1f, 0.9f, 0f, 0.4f);
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        // 돌진 발동 거리 (주황)
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, rushTriggerDistance);
+
+        // 원거리 공격 범위 (하늘색)
+        Gizmos.color = new Color(0.2f, 0.8f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, rangedAttackDistance);
     }
 }
 
