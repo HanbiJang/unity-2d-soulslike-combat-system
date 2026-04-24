@@ -1,4 +1,4 @@
-<img width="882" height="492" alt="Image" src="https://github.com/user-attachments/assets/eff466d4-7124-46f4-a0cd-38039561954b" />
+<img width="459" height="255" alt="Image" src="https://github.com/user-attachments/assets/361a93ba-6d16-48f1-9e01-7e7035110467" />
 
 ## 🎮 프로젝트 개요
 
