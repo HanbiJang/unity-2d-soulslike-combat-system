@@ -1,4 +1,5 @@
 <img width="459" height="255" alt="Image" src="https://github.com/user-attachments/assets/361a93ba-6d16-48f1-9e01-7e7035110467" />
+Youtube : https://youtu.be/mXKTkPdiSQg
 
 ## 🎮 프로젝트 개요
 
