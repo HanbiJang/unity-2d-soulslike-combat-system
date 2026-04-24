@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoPlay: 0
   autoPlayDelay: 3
+  screenFadeDuration: 0.8
   dialogueLines:
   - speakerName: "\uD5C8\uB178\uC778"
     dialogueText: "\uADF8\uB300\uC758 \uC0DD\uAC01\uC740 \uD2C0\uB838\uC5B4."
     target: 0
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uB0B4\uAC00 \uC815\uB2F5\uC744 \uB418\uACA0\uB2E4."
+    dialogueText: "\uB0B4\uAC00 \uC815\uB2F5\uC774 \uB418\uACA0\uB2E4."
     target: 0
