@@ -515,18 +515,15 @@ public class EnemyController : Enemy
             StartCoroutine(FlashRedCoroutine());
         }
 
-        // 체력이 50% 이하로 떨어지면 분노 상태 (각성 애니메이션은 한 번만)
+        // 체력이 50% 이하로 떨어지면 어떤 상태든 즉시 각성 상태로 전환
         if (CurrentHealthPercentage <= 0.5f && !isEnraged)
         {
             isEnraged = true;
-            
-            // 현재 상태가 HitState나 DeathState가 아니면 즉시 각성 상태로 전환
-            if (StateMachine.CurrentState != HitState && StateMachine.CurrentState != DeathState)
+            if (StateMachine.CurrentState != DeathState)
             {
                 hasPlayedEnrageAnimation = true;
                 StateMachine.ChangeState(EnrageState);
             }
-            // HitState면 나중에 HitState에서 전환하도록 함
         }
 
         // 사망 처리 (상태 머신으로 처리)

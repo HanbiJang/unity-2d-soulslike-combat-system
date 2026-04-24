@@ -29,17 +29,8 @@ public class EnemyHitState : EnemyState
 
         if (Time.time >= hitStartTime + hitDuration)
         {
-            if (enemy.isEnraged && !enemy.hasPlayedEnrageAnimation)
-            {
-                enemy.hasPlayedEnrageAnimation = true;
-                Debug.Log($"[HitState] t={Time.time:F2} | 각성 미재생 → EnrageState");
-                stateMachine.ChangeState(enemy.EnrageState);
-            }
-            else
-            {
-                Debug.Log($"[HitState] t={Time.time:F2} | hitDuration 완료 → ChaseState");
-                stateMachine.ChangeState(enemy.ChaseState);
-            }
+            Debug.Log($"[HitState] t={Time.time:F2} | hitDuration 완료 → ChaseState");
+            stateMachine.ChangeState(enemy.ChaseState);
             return;
         }
     }
