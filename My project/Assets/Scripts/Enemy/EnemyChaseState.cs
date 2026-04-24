@@ -11,7 +11,8 @@ public class EnemyChaseState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        
+        Debug.Log($"[ChaseState.Enter] t={Time.time:F2} | IsSuperArmor={enemy.IsSuperArmor} | superArmorEndTime={enemy.superArmorEndTime:F2} | dist={enemy.GetDistanceToPlayer():F2}");
+
         // 플레이어와의 충돌 무시 (플레이어를 밀지 않음)
         enemyColliders = enemy.GetComponents<Collider2D>();
         if (enemy.playerTarget != null)
@@ -90,12 +91,13 @@ public class EnemyChaseState : EnemyState
         }
 
         // 행동 딜레이 체크 (특수 행동에만 적용)
+        // canAct=True여도 조건 불만족 시 타이머를 소모하지 않음 → 기회를 낭비하지 않음
         bool canAct = enemy.CanPerformAction();
 
         // 우선순위 2: 플레이어가 회복 시도하면 → 돌진 (딜레이 무시)
         if (enemy.IsPlayerHealing())
         {
-            enemy.ResetActionDelay();
+            enemy.ConsumeAction();
             enemy.lastRushTime = Time.time;
             stateMachine.ChangeState(enemy.RushState);
             return;
@@ -104,6 +106,7 @@ public class EnemyChaseState : EnemyState
         // 우선순위 3: 플레이어가 멀면 → 돌진
         if (canAct && distance >= enemy.rushTriggerDistance && Time.time >= enemy.lastRushTime + enemy.rushCooldown)
         {
+            enemy.ConsumeAction();
             enemy.lastRushTime = Time.time;
             stateMachine.ChangeState(enemy.RushState);
             return;
@@ -112,6 +115,7 @@ public class EnemyChaseState : EnemyState
         // 우선순위 4: 플레이어가 가드 중이면 → 뒤로 물러남
         if (canAct && enemy.IsPlayerDefending())
         {
+            enemy.ConsumeAction();
             stateMachine.ChangeState(enemy.BackAwayState);
             return;
         }
@@ -119,6 +123,7 @@ public class EnemyChaseState : EnemyState
         // 우선순위 5: 플레이어가 멀면 → 원거리 공격
         if (canAct && distance >= enemy.rangedAttackDistance && Time.time >= enemy.lastRangedAttackTime + enemy.rangedAttackCooldown)
         {
+            enemy.ConsumeAction();
             enemy.lastRangedAttackTime = Time.time;
             stateMachine.ChangeState(enemy.RangedAttackState);
             return;
@@ -128,6 +133,13 @@ public class EnemyChaseState : EnemyState
         // 단, 플레이어가 죽지 않았을 때만
         if (!enemy.IsPlayerDead() && (enemy.isInCombat || distance <= enemy.detectionRange))
         {
+            // 매 60프레임마다 chase 유지 이유를 로그
+            if (Time.frameCount % 60 == 0)
+            {
+                float superArmorRemain = enemy.superArmorEndTime - Time.time;
+                float hitCoolRemain = (enemy.lastHitStateTime + enemy.hitStateCooldown) - Time.time;
+                Debug.Log($"[ChaseState.MoveOnly] t={Time.time:F2} | dist={distance:F2} | canAct={canAct} | IsSuperArmor={enemy.IsSuperArmor}(remain:{superArmorRemain:F2}s) | hitCoolRemain={hitCoolRemain:F2}s | rushCD_remain={(enemy.lastRushTime + enemy.rushCooldown - Time.time):F2}s | rangedCD_remain={(enemy.lastRangedAttackTime + enemy.rangedAttackCooldown - Time.time):F2}s");
+            }
             MoveTowardsPlayer();
         }
         else

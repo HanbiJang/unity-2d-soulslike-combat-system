@@ -157,9 +157,9 @@ public class GameOverUI : MonoBehaviour
         string[] messages = {
             "YOU DIED",
             "판결자가 당신을 기다립니다...",
-            "허노인의 양분이 되었습니다",
+            "판결자의 양분이 되었습니다",
             "기록에서 삭제되었습니다",
-            "패링 연습이 더 필요합니다"
+            "받아치기 연습이 필요합니다"
         };
         
         return messages[Random.Range(0, messages.Length)];

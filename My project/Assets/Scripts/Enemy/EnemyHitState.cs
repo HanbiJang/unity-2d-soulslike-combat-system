@@ -13,14 +13,14 @@ public class EnemyHitState : EnemyState
         hitStartTime = Time.time;
         enemy.SetVelocityX(0);
         enemy.IsSuperArmor = false;
+        Debug.Log($"[HitState.Enter] t={Time.time:F2} | IsSuperArmor=false | consecutiveHitCount(내부값은 TakeDamage 참고)");
     }
 
     public override void Exit()
     {
         base.Exit();
-        // ChaseState로 돌아가는 찰나를 보호
-        enemy.IsSuperArmor = true;
-        enemy.superArmorEndTime = float.MaxValue;
+        enemy.ResetActionDelay();
+        Debug.Log($"[HitState.Exit] t={Time.time:F2} | IsSuperArmor={enemy.IsSuperArmor} | superArmorEndTime={enemy.superArmorEndTime:F2} | → ChaseState 예정");
     }
 
     public override void LogicUpdate()
@@ -32,16 +32,17 @@ public class EnemyHitState : EnemyState
             if (enemy.isEnraged && !enemy.hasPlayedEnrageAnimation)
             {
                 enemy.hasPlayedEnrageAnimation = true;
+                Debug.Log($"[HitState] t={Time.time:F2} | 각성 미재생 → EnrageState");
                 stateMachine.ChangeState(enemy.EnrageState);
             }
             else
             {
+                Debug.Log($"[HitState] t={Time.time:F2} | hitDuration 완료 → ChaseState");
                 stateMachine.ChangeState(enemy.ChaseState);
             }
             return;
         }
     }
 }
-
 
 

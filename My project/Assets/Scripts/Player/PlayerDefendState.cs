@@ -85,6 +85,14 @@ public class PlayerDefendState : PlayerState
                 SoundManager.Instance.PlaySFX(SoundType.ParrySuccess);
             }
 
+            // 패링 성공 시 보스 체간 감소
+            if (damageSource != null)
+            {
+                EnemyController enemyCtrl = damageSource.GetComponent<EnemyController>();
+                if (enemyCtrl != null)
+                    enemyCtrl.ReducePosture(enemyCtrl.postureDamageOnParry);
+            }
+
             // ?? ?? ?? ??
             ParryEffect parryEffect = player.GetComponent<ParryEffect>();
             if (parryEffect != null)

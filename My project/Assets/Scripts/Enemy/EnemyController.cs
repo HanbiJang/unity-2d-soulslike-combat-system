@@ -68,6 +68,7 @@ public class EnemyController : Enemy
     public EnemyEnrageState EnrageState { get; private set; }
     public EnemyHitState HitState { get; private set; }
     public EnemyDeathState DeathState { get; private set; }
+    public EnemyGroggyState GroggyState { get; private set; }
 
     [Header("사망 후 대화")]
     [Tooltip("적이 죽고 나서 재생할 대화 데이터")]
@@ -114,7 +115,22 @@ public class EnemyController : Enemy
 
     [Tooltip("HitState 재진입 방지 쿨다운 (초) — HitState 지속시간보다 길게 설정")]
     public float hitStateCooldown = 0.8f;
-    private float lastHitStateTime = -10f;
+    public float lastHitStateTime { get; private set; } = -10f;
+
+    [Header("체간 게이지 설정")]
+    [Tooltip("최대 체간 값")]
+    public float maxPosture = 100f;
+    [Tooltip("체간 자동 회복 속도 (초당) — 플레이어가 공격하지 않을 때")]
+    public float postureRecoveryRate = 10f;
+    [Tooltip("그로기 지속 시간 (초)")]
+    public float groggyDuration = 3f;
+    [Tooltip("플레이어 공격 성공 시 체간 감소량")]
+    public float postureDamageOnHit = 20f;
+    [Tooltip("패링 성공 시 체간 감소량")]
+    public float postureDamageOnParry = 40f;
+
+    private float currentPosture;
+    public float PosturePercentage => currentPosture / maxPosture;
 
     // 행동 딜레이 시스템
     private float lastActionTime = -10f;
@@ -184,6 +200,8 @@ public class EnemyController : Enemy
         EnrageState = new EnemyEnrageState(this, "ENRAGE");
         HitState = new EnemyHitState(this, "HIT");
         DeathState = new EnemyDeathState(this, "DEATH");
+        GroggyState = new EnemyGroggyState(this, "GROGGY");
+        currentPosture = maxPosture;
     }
 
     protected override void Start()
@@ -222,6 +240,17 @@ public class EnemyController : Enemy
     {
         StateMachine.CurrentState.LogicUpdate();
         currentStateName = StateMachine.CurrentState.stateName;
+        UpdatePostureRecovery();
+    }
+
+    private void UpdatePostureRecovery()
+    {
+        if (StateMachine.CurrentState == GroggyState || StateMachine.CurrentState == DeathState) return;
+        if (currentPosture >= maxPosture) return;
+        if (!IsPlayerAttacking())
+        {
+            currentPosture = Mathf.Min(maxPosture, currentPosture + postureRecoveryRate * Time.deltaTime);
+        }
     }
 
     void FixedUpdate()
@@ -317,34 +346,24 @@ public class EnemyController : Enemy
         isInCombat = true;
     }
 
-    // 행동 딜레이 체크 (랜덤 딜레이가 지났는지 확인)
+    // 행동 창이 열려있는지 확인 (타이머를 소모하지 않음)
     public bool CanPerformAction()
     {
-        // 딜레이가 설정되지 않았으면 설정하고 즉시 허용 (첫 행동은 즉시 실행)
-        if (nextActionDelay <= 0f)
-        {
-            nextActionDelay = Random.Range(minActionDelay, maxActionDelay);
-            lastActionTime = Time.time;
-            return true;  // 첫 행동은 즉시 허용
-        }
-
-        // 딜레이가 지났는지 확인
-        if (Time.time >= lastActionTime + nextActionDelay)
-        {
-            // 다음 딜레이를 랜덤으로 설정 (엇박 효과)
-            nextActionDelay = Random.Range(minActionDelay, maxActionDelay);
-            lastActionTime = Time.time;
-            return true;
-        }
-
-        return false;
+        if (nextActionDelay <= 0f) return true;
+        return Time.time >= lastActionTime + nextActionDelay;
     }
 
-    // 행동 실행 후 딜레이 리셋 (긴급 상황용)
+    // 실제 행동을 수행했을 때 호출 — 다음 행동까지 딜레이 시작
+    public void ConsumeAction()
+    {
+        nextActionDelay = Random.Range(minActionDelay, maxActionDelay);
+        lastActionTime = Time.time;
+    }
+
+    // 행동 창 즉시 열기 (긴급 상황: rush 후 복귀, HitState 후 복귀 등)
     public void ResetActionDelay()
     {
         nextActionDelay = 0f;
-        lastActionTime = Time.time;
     }
 
     // 이동 관련
@@ -404,6 +423,23 @@ public class EnemyController : Enemy
         }
     }
 
+    public void ReducePosture(float amount)
+    {
+        if (StateMachine.CurrentState == GroggyState || StateMachine.CurrentState == DeathState) return;
+
+        currentPosture -= amount;
+        if (currentPosture <= 0f)
+        {
+            currentPosture = 0f;
+            StateMachine.ChangeState(GroggyState);
+        }
+    }
+
+    public void ResetPosture()
+    {
+        currentPosture = maxPosture;
+    }
+
     // 피해 받기 (Enemy의 TakeDamage를 오버라이드)
     public override void TakeDamage(int damage)
     {
@@ -413,9 +449,22 @@ public class EnemyController : Enemy
             StartCombat();
         }
 
+        // 그로기 상태에서는 데미지만 받음 (상태 전환 없음)
+        if (StateMachine.CurrentState == GroggyState)
+        {
+            currentHealth -= damage;
+            if (sr != null) StartCoroutine(FlashRedCoroutine());
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFX(SoundType.EnemyHit);
+            if (currentHealth <= 0 && StateMachine.CurrentState != DeathState)
+                StateMachine.ChangeState(DeathState);
+            return;
+        }
+
         // 슈퍼아머 만료 체크
         if (IsSuperArmor && Time.time >= superArmorEndTime)
         {
+            Debug.Log($"[TakeDamage] t={Time.time:F2} | 슈퍼아머 만료 → 해제");
             IsSuperArmor = false;
             consecutiveHitCount = 0;
         }
@@ -429,6 +478,7 @@ public class EnemyController : Enemy
                 IsSuperArmor = true;
                 superArmorEndTime = Time.time + superArmorDuration;
                 consecutiveHitCount = 0;
+                Debug.Log($"[TakeDamage] t={Time.time:F2} | 연속피격 임계치 도달 → 슈퍼아머 발동 (endTime={superArmorEndTime:F2})");
             }
         }
 
@@ -436,8 +486,17 @@ public class EnemyController : Enemy
         bool hitCooldownActive = Time.time < lastHitStateTime + hitStateCooldown;
         if (!IsSuperArmor && !hitCooldownActive && StateMachine.CurrentState != HitState && StateMachine.CurrentState != DeathState)
         {
+            Debug.Log($"[TakeDamage] t={Time.time:F2} | → HitState 진입 | state={StateMachine.CurrentState.stateName}");
             lastHitStateTime = Time.time;
             StateMachine.ChangeState(HitState);
+        }
+        else
+        {
+            string reason = IsSuperArmor ? $"슈퍼아머(remain:{superArmorEndTime - Time.time:F2}s)"
+                          : hitCooldownActive ? $"hitCooldown(remain:{lastHitStateTime + hitStateCooldown - Time.time:F2}s)"
+                          : StateMachine.CurrentState == HitState ? "이미HitState"
+                          : "기타";
+            Debug.Log($"[TakeDamage] t={Time.time:F2} | HitState 차단: {reason} | state={StateMachine.CurrentState.stateName} | consecutiveHit={consecutiveHitCount}");
         }
 
         // 체력 감소 (부모의 TakeDamage는 호출하지 않음 - Die() 호출을 막기 위해)
@@ -474,7 +533,11 @@ public class EnemyController : Enemy
         if (currentHealth <= 0 && StateMachine.CurrentState != DeathState)
         {
             StateMachine.ChangeState(DeathState);
+            return;
         }
+
+        // 체간 감소 (사망하지 않은 경우에만)
+        ReducePosture(postureDamageOnHit);
     }
 
     private System.Collections.IEnumerator FlashRedCoroutine()

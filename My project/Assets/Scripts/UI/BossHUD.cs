@@ -10,6 +10,7 @@ public class BossHUD : MonoBehaviour
     [SerializeField] private Text bossNameText;
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Image healthBackgroundImage;
+    [SerializeField] private Image postureFillImage;
     
     [Header("애니메이션 설정")]
     [SerializeField] private float fillLerpSpeed = 5f;
@@ -17,6 +18,7 @@ public class BossHUD : MonoBehaviour
     [SerializeField] private float fadeOutDuration = 0.5f;
 
     private Enemy currentBoss;
+    private EnemyController currentBossController;
     private CanvasGroup canvasGroup;
     private bool isVisible = false;
 
@@ -59,6 +61,7 @@ public class BossHUD : MonoBehaviour
         }
 
         currentBoss = boss;
+        currentBossController = boss as EnemyController ?? boss.GetComponent<EnemyController>();
         ShowBossUI();
     }
 
@@ -70,6 +73,7 @@ public class BossHUD : MonoBehaviour
         if (currentBoss == boss)
         {
             currentBoss = null;
+            currentBossController = null;
             HideBossUI();
         }
     }
@@ -90,6 +94,10 @@ public class BossHUD : MonoBehaviour
             float healthPercent = (float)currentBoss.CurrentHealth / currentBoss.MaxHealth;
             healthFillImage.fillAmount = healthPercent;
         }
+
+        // 체간바 초기화
+        if (postureFillImage != null)
+            postureFillImage.fillAmount = 1f;
 
         // UI 표시
         if (bossPanel != null)
@@ -169,8 +177,18 @@ public class BossHUD : MonoBehaviour
         {
             float targetFill = (float)currentBoss.CurrentHealth / currentBoss.MaxHealth;
             healthFillImage.fillAmount = Mathf.MoveTowards(
-                healthFillImage.fillAmount, 
-                targetFill, 
+                healthFillImage.fillAmount,
+                targetFill,
+                Time.deltaTime * fillLerpSpeed
+            );
+        }
+
+        // 체간바 업데이트
+        if (postureFillImage != null && currentBossController != null)
+        {
+            postureFillImage.fillAmount = Mathf.MoveTowards(
+                postureFillImage.fillAmount,
+                currentBossController.PosturePercentage,
                 Time.deltaTime * fillLerpSpeed
             );
         }
