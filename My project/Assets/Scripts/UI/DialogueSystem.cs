@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using System.Collections;
 
 public class DialogueSystem : MonoBehaviour
@@ -12,7 +13,8 @@ public class DialogueSystem : MonoBehaviour
 
     [Header("말풍선 UI")]
     [SerializeField] private SpeechBubble playerBubble;
-    [SerializeField] private SpeechBubble enemyBubble;
+    [FormerlySerializedAs("enemyBubble")]
+    [SerializeField] private SpeechBubble otherBubble;
 
     [Header("대화 진행 UI")]
     [SerializeField] private GameObject continuePrompt;
@@ -24,7 +26,8 @@ public class DialogueSystem : MonoBehaviour
 
     [Header("참조")]
     [SerializeField] private Transform playerTransform;
-    [SerializeField] private Transform enemyTransform;
+    [FormerlySerializedAs("enemyTransform")]
+    [SerializeField] private Transform interactionTarget;
     [SerializeField] private CameraController cameraController;
 
     private DialogueData currentDialogue;
@@ -68,12 +71,12 @@ public class DialogueSystem : MonoBehaviour
         }
 
         // 적 찾기
-        if (enemyTransform == null)
+        if (interactionTarget == null)
         {
             EnemyController enemy = FindObjectOfType<EnemyController>();
             if (enemy != null)
             {
-                enemyTransform = enemy.transform;
+                interactionTarget = enemy.transform;
             }
         }
 
@@ -199,16 +202,16 @@ public class DialogueSystem : MonoBehaviour
         {
             playerBubble.HideDialogue();
         }
-        if (enemyBubble != null)
+        if (otherBubble != null)
         {
-            enemyBubble.HideDialogue();
+            otherBubble.HideDialogue();
         }
         
         // 페이드 아웃이 완료될 때까지 대기 (최대 0.6초)
         float waitTime = 0f;
         while (waitTime < 0.6f && 
                ((playerBubble != null && playerBubble.IsFadingOut) || 
-                (enemyBubble != null && enemyBubble.IsFadingOut)))
+                (otherBubble != null && otherBubble.IsFadingOut)))
         {
             waitTime += Time.deltaTime;
             yield return null;
@@ -228,8 +231,8 @@ public class DialogueSystem : MonoBehaviour
         }
         else
         {
-            targetBubble = enemyBubble;
-            targetTransform = enemyTransform;
+            targetBubble = otherBubble;
+            targetTransform = interactionTarget;
         }
 
         if (targetBubble != null && targetTransform != null)
@@ -300,7 +303,7 @@ public class DialogueSystem : MonoBehaviour
         StopFadeAnimation();
 
         if (playerBubble != null) playerBubble.HideDialogue();
-        if (enemyBubble != null) enemyBubble.HideDialogue();
+        if (otherBubble != null) otherBubble.HideDialogue();
 
         if (continuePrompt != null) continuePrompt.SetActive(false);
 
@@ -375,6 +378,16 @@ public class DialogueSystem : MonoBehaviour
             playerController.IsInputDisabled = false;
         }
     }
+
+    /// <summary>
+    /// 대화 상대(NPC 등)의 Transform을 동적으로 지정합니다.
+    /// 지정된 대상은 otherBubble 위치 기준으로 대화가 표시됩니다.
+    /// </summary>
+    public void SetInteractionTarget(Transform target)
+    {
+        interactionTarget = target;
+    }
+
 
     public bool IsDialogueActive => isDialogueActive;
 

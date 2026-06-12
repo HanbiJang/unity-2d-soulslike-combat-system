@@ -10,14 +10,14 @@ public class DialogueLine
     [TextArea(2, 5)]
     public string dialogueText = "";
     
-    [Tooltip("말풍선이 표시될 위치 (플레이어 또는 적)")]
+    [Tooltip("말풍선이 표시될 위치 (플레이어 또는 대화 상대)")]
     public DialogueTarget target = DialogueTarget.Player;
 }
 
 public enum DialogueTarget
 {
     Player,
-    Enemy
+    Other
 }
 
 [CreateAssetMenu(fileName = "DialogueData", menuName = "ScriptableObjects/DialogueData", order = 1)]
