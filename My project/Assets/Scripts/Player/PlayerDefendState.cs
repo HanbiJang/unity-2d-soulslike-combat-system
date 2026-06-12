@@ -3,9 +3,9 @@ public class PlayerDefendState : PlayerState
 {
     private float entryTime;
     private bool isParrying;
-    private bool hasParried;  // ?? ?? ??
-    private float parrySuccessTime;  // ?? ?? ??
-    private const float parryAnimationDuration = 0.5f;  // ?? ????? ?? ??
+    private bool hasParried;  
+    private float parrySuccessTime;  
+    private const float parryAnimationDuration = 0.5f;  
 
     public PlayerDefendState(PlayerController player, string stateName) : base(player, stateName) { }
 
