@@ -16,15 +16,19 @@ MonoBehaviour:
   autoPlayDelay: 3
   screenFadeDuration: 0.8
   dialogueLines:
-  - speakerName: "\uC9C4"
-    dialogueText: "\uC800\uAE30, \uB098\uC73C\uB9AC!"
+  - speakerName: "\uB300\uC7A5\uC7A5\uC774"
+    dialogueText: "\uC544\uC544, \uC55E\uC774 \uC548\uBCF4\uC5EC!"
+    target: 1
+  - speakerName: "\uB300\uC7A5\uC7A5\uC774"
+    dialogueText: "\uBB34\uAE30\uB97C \uBCBC\uB97C \uC218\uAC00 \uC5C6\uC5B4!"
+    target: 1
+  - speakerName: "\uB300\uC7A5\uC7A5\uC774"
+    dialogueText: "\uAD34\uC218\uAC00 \uB0B4 \uC758\uC548\uC744 \uAC00\uC9C0\uACE0
+      \uB9C8\uC744 \uBC16\uC73C\uB85C \uB3C4\uB9DD\uAC14\uC5B4."
+    target: 1
+  - speakerName: "\uB300\uC7A5\uC7A5\uC774"
+    dialogueText: "\uADF8 \uB188\uB4E4\uC744 \uCC3E\uC544\uC11C \uD63C\uB0B4\uC918."
     target: 1
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: ...
-    target: 0
-  - speakerName: "\uC9C4"
-    dialogueText: "\uB098\uC73C\uB9AC!"
-    target: 1
-  - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uBB54\uAC00?"
+    dialogueText: "...\uC54C\uACA0\uB2E4."
     target: 0

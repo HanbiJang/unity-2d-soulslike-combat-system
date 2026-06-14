@@ -129,6 +129,16 @@ public class CameraController : MonoBehaviour
         isInDialogueMode = false;
     }
 
+    /// <summary>
+    /// 씬 전환 후 플레이어 타겟을 다시 연결합니다. (PlayerPersistence가 호출)
+    /// </summary>
+    public void SetPlayerTarget(Transform player)
+    {
+        target = player;
+        originalTarget = player;
+        isInDialogueMode = false;
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(1, 0, 0, 0.5f); Vector3 center = (minBounds + maxBounds) * 0.5f;
