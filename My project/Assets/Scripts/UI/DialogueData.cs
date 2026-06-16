@@ -24,6 +24,9 @@ public enum DialogueTarget
 public class DialogueData : ScriptableObject
 {
     [Header("대화 설정")]
+    [Tooltip("한 플레이에서 딱 한번만 재생됨")]
+    public bool playOnce = false;
+
     [Tooltip("대화가 자동으로 진행되는지 (false면 클릭/키 입력 필요)")]
     public bool autoPlay = false;
 

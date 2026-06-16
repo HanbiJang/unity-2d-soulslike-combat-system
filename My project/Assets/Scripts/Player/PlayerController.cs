@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
     public bool IsTouchingLadder { get; private set; }
     public bool IsInvincible { get; set; }
     public int ComboCounter { get; set; }
-    public bool IsAttackInputBuffered { get; set; }
+    public InputBuffer InputBuffer { get; private set; }
     // 대사/컷씬 등에서 입력을 막기 위한 플래그
     public bool IsInputDisabled { get; set; }
 
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
         originalColliderOffset = PlayerCollider.offset;
         defaultGravityScale = Rb.gravityScale;
         lastDashTime = -10f; lastAttackTime = -10f;
-
+        InputBuffer = new InputBuffer();
 
         StateMachine = new PlayerStateMachine();
         IdleState = new PlayerIdleState(this, "IDLE");
@@ -145,20 +145,32 @@ public class PlayerController : MonoBehaviour
             IsHealInput = false;
             IsThrowInput = false;
             IsSpecialAttackInput = false;
+            InputBuffer.Clear();
             return;
         }
 
         Input = new Vector2(UnityEngine.Input.GetAxisRaw("Horizontal"), UnityEngine.Input.GetAxisRaw("Vertical"));
-        if (UnityEngine.Input.GetButtonDown("Jump")) StartCoroutine(JumpInputStopRoutine());
+        if (UnityEngine.Input.GetButtonDown("Jump"))
+        {
+            InputBuffer.Add(BufferableInput.Jump);
+            StartCoroutine(JumpInputStopRoutine());
+        }
         if (UnityEngine.Input.GetKeyDown(KeyCode.LeftShift)) shiftHoldDuration = 0f;
         if (UnityEngine.Input.GetKey(KeyCode.LeftShift)) shiftHoldDuration += Time.deltaTime;
         if (UnityEngine.Input.GetKeyUp(KeyCode.LeftShift))
         {
             if (shiftHoldDuration < stats.runHoldThreshold && Mathf.Abs(Input.x) > 0f)
+            {
+                InputBuffer.Add(BufferableInput.Dash);
                 StartCoroutine(DashInputStopRoutine());
+            }
             shiftHoldDuration = 0f;
         }
-        if (UnityEngine.Input.GetKeyDown(KeyCode.Z) || UnityEngine.Input.GetMouseButtonDown(0)) StartCoroutine(AttackInputStopRoutine());
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Z) || UnityEngine.Input.GetMouseButtonDown(0))
+        {
+            InputBuffer.Add(BufferableInput.Attack);
+            StartCoroutine(AttackInputStopRoutine());
+        }
 
         IsRunInput = UnityEngine.Input.GetKey(KeyCode.LeftShift) && shiftHoldDuration >= stats.runHoldThreshold;
         IsDefendInput = UnityEngine.Input.GetKey(KeyCode.Mouse1); IsHealInput = UnityEngine.Input.GetKeyDown(KeyCode.R);

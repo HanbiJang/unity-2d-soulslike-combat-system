@@ -29,7 +29,7 @@ public abstract class PlayerGroundedState : PlayerState
             return;
         }
 
-        if (player.AttackInput && player.CanAttack() && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
+        if ((player.AttackInput || player.InputBuffer.Consume(BufferableInput.Attack, InputBuffer.AttackWindow)) && player.CanAttack() && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
         {
             stateMachine.ChangeState(player.AttackState);
             return;
@@ -58,7 +58,7 @@ public abstract class PlayerGroundedState : PlayerState
             }
         }
 
-        if (player.JumpInput && player.StatsManager.CurrentStamina >= player.stats.jumpStaminaCost)
+        if ((player.JumpInput || player.InputBuffer.Consume(BufferableInput.Jump, InputBuffer.JumpWindow)) && player.StatsManager.CurrentStamina >= player.stats.jumpStaminaCost)
         {
             if (player.Input.y < -0.5f)
             {
@@ -76,7 +76,7 @@ public abstract class PlayerGroundedState : PlayerState
         {
             stateMachine.ChangeState(player.InAirState);
         }
-        else if (player.DashInput && player.CanDash())
+        else if ((player.DashInput || player.InputBuffer.Consume(BufferableInput.Dash, InputBuffer.DashWindow)) && player.CanDash())
         {
             stateMachine.ChangeState(player.DashState);
         }

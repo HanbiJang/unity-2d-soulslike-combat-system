@@ -16,8 +16,11 @@ public class PlayerAttackState : PlayerState
         player.StatsManager.TryUseStamina(player.stats.attackStaminaCost);
         attackStartTime = Time.time;
         player.lastAttackTime = Time.time;
-        hasPerformedAttack = false; player.IsAttackInputBuffered = false;
+        hasPerformedAttack = false;
         currentAttackData = player.stats.attackChain[player.ComboCounter];
+
+        // 이번 공격을 트리거한 입력 소비 - 버퍼에 남아있으면 콤보 오작동 생김
+        player.InputBuffer.Consume(BufferableInput.Attack, InputBuffer.AttackWindow);
 
         if (player.Anim != null)
         {
@@ -36,14 +39,11 @@ public class PlayerAttackState : PlayerState
     {
         base.LogicUpdate();
 
-        if (player.AttackInput)
-        {
-            player.IsAttackInputBuffered = true;
-        }
-
         if (Time.time >= attackStartTime + currentAttackData.attackDuration)
         {
-            if (player.IsAttackInputBuffered && player.ComboCounter < player.stats.attackChain.Length - 1 && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
+            // 윈도우를 애니메이션 전체 길이 + 여유로 잡음 - 초반에 눌러도 만료 안 됨
+            float comboWindow = currentAttackData.attackDuration + 0.1f;
+            if (player.InputBuffer.Consume(BufferableInput.Attack, comboWindow) && player.ComboCounter < player.stats.attackChain.Length - 1 && player.StatsManager.CurrentStamina >= player.stats.attackStaminaCost)
             {
                 player.ComboCounter++; player.AttackState.SetIsGroundedAttack(this.IsGroundedAttack);
                 stateMachine.ChangeState(player.AttackState);

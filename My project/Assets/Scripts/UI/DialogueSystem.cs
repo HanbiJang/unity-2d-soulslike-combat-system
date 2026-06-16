@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DialogueSystem : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class DialogueSystem : MonoBehaviour
     private DialogueData currentDialogue;
     private int currentDialogueIndex = 0;
     private bool isDialogueActive = false;
+    private static readonly HashSet<DialogueData> _playedOnceDialogues = new HashSet<DialogueData>();
     private bool canContinue = false;
     private PlayerController playerController;
     private Coroutine fadeCoroutine; // 페이드인아웃 코루틴 참조
@@ -136,6 +138,7 @@ public class DialogueSystem : MonoBehaviour
     public void StartDialogue(DialogueData dialogue, bool fadeOutOnEnd = false, bool fadeOutOnStart = false)
     {
         if (dialogue == null || dialogue.dialogueLines.Length == 0) return;
+        if (dialogue.playOnce && _playedOnceDialogues.Contains(dialogue)) return;
 
         currentDialogue = dialogue;
         currentDialogueIndex = 0;
@@ -297,6 +300,9 @@ public class DialogueSystem : MonoBehaviour
 
     private void EndDialogue()
     {
+        if (currentDialogue != null && currentDialogue.playOnce)
+            _playedOnceDialogues.Add(currentDialogue);
+
         isDialogueActive = false;
         canContinue = false;
 
