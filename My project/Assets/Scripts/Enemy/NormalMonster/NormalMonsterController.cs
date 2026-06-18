@@ -1,0 +1,162 @@
+using UnityEngine;
+using System.Collections;
+
+public class NormalMonsterController : Enemy
+{
+    [Header("AI 범위")]
+    [SerializeField] float detectionRange = 10f;
+    [SerializeField] float attackRange = 5f;
+
+    [Header("이동")]
+    [SerializeField] float moveSpeed = 3f;
+
+    [Header("공격")]
+    [SerializeField] float attackCooldown = 2f;
+    [SerializeField] GameObject projectilePrefab;
+    [SerializeField] Transform firePoint;
+    [SerializeField] LayerMask groundLayer;
+
+    [Header("디버그")]
+    [SerializeField] string currentStateName;
+
+    // 컴포넌트
+    public Animator Anim { get; private set; }
+    public Rigidbody2D Rb { get; private set; }
+    private SpriteRenderer sr;
+
+    // 상태 머신
+    public NormalMonsterStateMachine StateMachine { get; private set; }
+    public NMIdleState IdleState { get; private set; }
+    public NMFlyingState FlyingState { get; private set; }
+    public NMAttackState AttackState { get; private set; }
+    public NMHurtState HurtState { get; private set; }
+    public NMDeathState DeathState { get; private set; }
+
+    // 플레이어
+    public Transform PlayerTarget { get; private set; }
+
+    // 프로퍼티
+    public float DetectionRange => detectionRange;
+    public float AttackRange => attackRange;
+    public float MoveSpeed => moveSpeed;
+
+    // 공격 쿨다운
+    private float lastAttackTime = -999f;
+    public bool CanAttack => Time.time - lastAttackTime >= attackCooldown;
+    public void ConsumeAttack() => lastAttackTime = Time.time;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Rb = GetComponent<Rigidbody2D>();
+        Anim = GetComponentInChildren<Animator>();
+        sr = GetComponentInChildren<SpriteRenderer>();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        PlayerTarget = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        StateMachine = new NormalMonsterStateMachine();
+        IdleState = new NMIdleState(this, "NMIdle");
+        FlyingState = new NMFlyingState(this, "NMFlying");
+        AttackState = new NMAttackState(this, "NMAttack");
+        HurtState = new NMHurtState(this, "NMHurt");
+        DeathState = new NMDeathState(this, "NMDeath");
+
+        StateMachine.Initialize(IdleState);
+    }
+
+    private void Update()
+    {
+        StateMachine.CurrentState.LogicUpdate();
+        currentStateName = StateMachine.CurrentState.stateName;
+    }
+
+    private void FixedUpdate()
+    {
+        StateMachine.CurrentState.PhysicsUpdate();
+    }
+
+    // 애니메이션 이벤트 → 현재 상태로 전달
+    public void AnimationTrigger()
+    {
+        StateMachine.CurrentState.AnimationTrigger();
+    }
+
+    public float GetDistanceToPlayer()
+    {
+        if (PlayerTarget == null) return float.MaxValue;
+        return Vector2.Distance(transform.position, PlayerTarget.position);
+    }
+
+    // 플레이어 방향으로 날아서 이동
+    public void MoveTowardPlayer()
+    {
+        if (PlayerTarget == null) return;
+        Vector2 dir = (PlayerTarget.position - transform.position).normalized;
+        Rb.velocity = dir * moveSpeed;
+        if (sr != null)
+            sr.flipX = dir.x >= 0;
+    }
+
+    public void StopMovement()
+    {
+        Rb.velocity = Vector2.zero;
+    }
+
+    // 플레이어 방향으로 투사체 발사
+    public void FireProjectile()
+    {
+        if (projectilePrefab == null || firePoint == null || PlayerTarget == null) return;
+
+        Vector2 dir = (PlayerTarget.position - firePoint.position).normalized;
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        EnemyProjectile projScript = proj.GetComponent<EnemyProjectile>();
+        if (projScript != null)
+        {
+            Collider2D[] myColliders = GetComponentsInChildren<Collider2D>();
+            projScript.Launch(dir, myColliders, groundLayer);
+        }
+    }
+
+    public override void TakeDamage(int damage)
+    {
+        // 이미 죽은 상태면 무시
+        if (StateMachine == null || StateMachine.CurrentState == DeathState) return;
+
+        currentHealth -= damage;
+        StartCoroutine(FlashRed());
+
+        if (currentHealth <= 0)
+        {
+            StateMachine.ChangeState(DeathState);
+            return;
+        }
+
+        StateMachine.ChangeState(HurtState);
+    }
+
+    private IEnumerator FlashRed()
+    {
+        if (sr != null)
+        {
+            sr.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            sr.color = Color.white;
+        }
+    }
+
+    // 애니메이션 끝나고 Destroy하므로 base.Die()는 호출 안 함
+    protected override void Die() { }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+}

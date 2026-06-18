@@ -1730,11 +1730,12 @@ MonoBehaviour:
   controlsText: {fileID: 159078998}
   canvasGroup: {fileID: 1935998711}
   showDelay: 1
-  displayDuration: 5
+  displayDuration: 3
   fadeInDuration: 1
   fadeOutDuration: 1
-  controlsMessage: "\uC774\uB3D9 - WASD\n\uACF5\uACA9 -  \uC88C\uD074\uB9AD\n\uAC00\uB4DC
-    / \uD328\uB9C1 - \uC6B0\uD074\uB9AD\n\uB300\uC2DC / \uD68C\uD53C - Shift\n"
+  controlsMessage: "\uC774\uB3D9 : WASD\n\uACF5\uACA9 : \uC88C\uD074\uB9AD\n\uAC00\uB4DC
+    / \uD328\uB9C1 : \uC6B0\uD074\uB9AD\n\uB300\uC2DC / \uD68C\uD53C : Shift\n\uD68C\uBCF5
+    : R\n"
 --- !u!4 &1054629793
 Transform:
   m_ObjectHideFlags: 0

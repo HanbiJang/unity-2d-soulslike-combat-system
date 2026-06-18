@@ -10,22 +10,35 @@ public class PlayerDashState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        player.lastDashTime = Time.time; player.IsInvincible = true; dashCoroutine = player.StartCoroutine(Dash());
-        
-        // 대시 소리 재생
+        player.lastDashTime = Time.time;
+        player.IsInvincible = true;
+        dashCoroutine = player.StartCoroutine(Dash());
+        SetEnemyCollision(false);
+
         if (SoundManager.Instance != null)
-        {
             SoundManager.Instance.PlaySFX(SoundType.PlayerDash);
-        }
     }
+
     public override void Exit()
     {
         base.Exit();
-        player.IsInvincible = false; if (dashCoroutine != null)
-        {
+        player.IsInvincible = false;
+        if (dashCoroutine != null)
             player.StopCoroutine(dashCoroutine);
-        }
         player.ResetGravity();
+        SetEnemyCollision(true);
+    }
+
+    // 대시 중 적 레이어와의 물리 충돌을 켜거나 끔
+    private void SetEnemyCollision(bool enabled)
+    {
+        int playerLayer = player.gameObject.layer;
+        int enemyMask = player.stats.enemyLayer.value;
+        for (int i = 0; i < 32; i++)
+        {
+            if ((enemyMask & (1 << i)) != 0)
+                Physics2D.IgnoreLayerCollision(playerLayer, i, !enabled);
+        }
     }
 
     private IEnumerator Dash()

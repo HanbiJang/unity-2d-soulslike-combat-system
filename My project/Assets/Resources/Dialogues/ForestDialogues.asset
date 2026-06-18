@@ -18,6 +18,6 @@ MonoBehaviour:
   screenFadeDuration: 0.8
   dialogueLines:
   - speakerName: "\uD5C8\uB178\uC778"
-    dialogueText: "\uC774 \uAD34\uC218\uAC00 \uC758\uC548\uC744 \uAC00\uC9C0\uACE0
+    dialogueText: "\uC800 \uAD34\uC218\uAC00 \uC758\uC548\uC744 \uAC00\uC9C0\uACE0
       \uC788\uB294 \uAC83 \uAC19\uB2E4.."
     target: 0

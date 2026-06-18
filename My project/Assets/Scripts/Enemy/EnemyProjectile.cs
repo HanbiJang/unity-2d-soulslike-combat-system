@@ -16,6 +16,7 @@ public class EnemyProjectile : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -23,9 +24,14 @@ public class EnemyProjectile : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
+    private SpriteRenderer sr;
+
     public void Launch(Vector2 dir, Collider2D[] ignoreColliders, LayerMask ground)
     {
         groundLayer = ground;
+
+        if (sr != null)
+            sr.flipX = dir.x >= 0;
 
         // 발사한 보스의 콜라이더 무시
         Collider2D[] myColliders = GetComponents<Collider2D>();
