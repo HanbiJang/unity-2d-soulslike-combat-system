@@ -13,6 +13,7 @@ public class NMDeathState : NormalMonsterState
     {
         base.Enter();
         monster.StopMovement();
+        monster.DropItems(); // 사망 즉시 아이템 드롭
         timer = 0f;
     }
 

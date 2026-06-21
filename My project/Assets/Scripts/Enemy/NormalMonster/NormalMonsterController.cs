@@ -16,6 +16,11 @@ public class NormalMonsterController : Enemy
     [SerializeField] Transform firePoint;
     [SerializeField] LayerMask groundLayer;
 
+    [Header("아이템 드롭")]
+    [SerializeField] ItemData[] dropItems;           // 이 몬스터가 드롭할 아이템 목록
+    [SerializeField] GameObject itemPickupPrefab;    // 바닥에 생성될 픽업 프리팹
+    [SerializeField] float dropScatterRadius = 0.5f; // 드롭 위치 랜덤 반경
+
     [Header("디버그")]
     [SerializeField] string currentStateName;
 
@@ -146,6 +151,30 @@ public class NormalMonsterController : Enemy
             sr.color = Color.red;
             yield return new WaitForSeconds(0.1f);
             sr.color = Color.white;
+        }
+    }
+
+    // 죽은 자리 근처에 아이템들을 생성 (NMDeathState.Enter에서 호출)
+    public void DropItems()
+    {
+        if (itemPickupPrefab == null) return;
+
+        foreach (var item in dropItems)
+        {
+            if (item == null) continue;
+
+            // 랜덤한 방향과 거리로 드롭 위치 계산
+            Vector2 offset = Random.insideUnitCircle * dropScatterRadius;
+            Vector3 spawnPos = transform.position + new Vector3(offset.x, offset.y, 0f);
+
+            // 픽업 오브젝트 생성 후 아이템 데이터 주입
+            GameObject pickup = Instantiate(itemPickupPrefab, spawnPos, Quaternion.identity);
+            ItemPickup pickupScript = pickup.GetComponent<ItemPickup>();
+            if (pickupScript != null)
+            {
+                pickupScript.SetItem(item);
+                pickupScript.SetGroundLayer(groundLayer); // 몬스터의 groundLayer 재사용
+            }
         }
     }
 
