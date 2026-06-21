@@ -39,12 +39,10 @@ public class SpeechBubble : MonoBehaviour
             mainCamera = FindObjectOfType<Camera>();
         }
         
-        // 초기에는 숨김
-        if (bubblePanel != null)
-        {
-            bubblePanel.SetActive(false);
-        }
+        // SetActive 대신 CanvasGroup으로 숨김 (GameObject는 항상 활성 유지)
         canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
     }
 
     public void SetTarget(Transform target)
@@ -54,26 +52,26 @@ public class SpeechBubble : MonoBehaviour
 
     public void ShowDialogue(string speakerName, string text)
     {
-        if (bubblePanel != null)
-        {
-            bubblePanel.SetActive(true);
-        }
-        
-        if (speakerNameText != null)
-        {
-            speakerNameText.text = speakerName;
-        }
-        
-        if (dialogueText != null)
-        {
-            dialogueText.text = text;
-        }
-        
+        if (speakerNameText != null) speakerNameText.text = speakerName;
+        if (dialogueText != null)    dialogueText.text = text;
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
         StartCoroutine(FadeIn());
     }
 
     private bool isFadingOut = false;
     
+    // 즉시 숨김 (전환 시 겹침 방지용)
+    public void HideImmediate()
+    {
+        StopAllCoroutines();
+        isFadingOut = false;
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+
     public void HideDialogue()
     {
         if (!isFadingOut)
@@ -81,7 +79,7 @@ public class SpeechBubble : MonoBehaviour
             StartCoroutine(FadeOut());
         }
     }
-    
+
     public bool IsFadingOut => isFadingOut;
 
     private IEnumerator FadeIn()
@@ -99,25 +97,22 @@ public class SpeechBubble : MonoBehaviour
     private IEnumerator FadeOut()
     {
         isFadingOut = true;
+        float startAlpha = canvasGroup.alpha;
         float elapsed = 0f;
         while (elapsed < fadeOutDuration)
         {
             elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeOutDuration);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeOutDuration);
             yield return null;
         }
         canvasGroup.alpha = 0f;
-        
-        if (bubblePanel != null)
-        {
-            bubblePanel.SetActive(false);
-        }
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
         isFadingOut = false;
     }
 
     private void Update()
     {
-        // 타겟을 따라가도록 위치 업데이트
         if (targetTransform != null && mainCamera != null && canvas != null)
         {
             Vector2 screenPoint = mainCamera.WorldToScreenPoint(targetTransform.position + (Vector3)offset);

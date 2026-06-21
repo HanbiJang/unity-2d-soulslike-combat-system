@@ -200,28 +200,11 @@ public class DialogueSystem : MonoBehaviour
     
     private IEnumerator HidePreviousBubblesAndShowNew(DialogueLine line)
     {
-        // 이전 말풍선 숨기기
-        if (playerBubble != null)
-        {
-            playerBubble.HideDialogue();
-        }
-        if (otherBubble != null)
-        {
-            otherBubble.HideDialogue();
-        }
-        
-        // 페이드 아웃이 완료될 때까지 대기 (최대 0.6초)
-        float waitTime = 0f;
-        while (waitTime < 0.6f && 
-               ((playerBubble != null && playerBubble.IsFadingOut) || 
-                (otherBubble != null && otherBubble.IsFadingOut)))
-        {
-            waitTime += Time.deltaTime;
-            yield return null;
-        }
-        
-        // 약간의 추가 딜레이 (부드러운 전환)
-        yield return new WaitForSeconds(0.1f);
+        // 이전 말풍선 즉시 숨김 — 겹침 방지
+        playerBubble?.HideImmediate();
+        otherBubble?.HideImmediate();
+
+        yield return null; // 한 프레임 대기 후 새 버블 표시
 
         // 타겟에 따라 말풍선 표시
         SpeechBubble targetBubble = null;

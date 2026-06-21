@@ -18,7 +18,7 @@ MonoBehaviour:
   screenFadeDuration: 0.8
   dialogueLines:
   - speakerName: "\uB300\uC7A5\uC7A5\uC774"
-    dialogueText: "\uC544\uC544, \uB208\uB450\uBA4D\uC774\uAC00 \uC544\uD30C!"
+    dialogueText: "\uC544\uC544, \uB208\uC774 \uC544\uD30C!"
     target: 1
   - speakerName: "\uB300\uC7A5\uC7A5\uC774"
     dialogueText: "\uBB34\uAE30\uB97C \uBCBC\uB97C \uC218\uAC00 \uC5C6\uC5B4!"
