@@ -22,6 +22,26 @@ public class PlayerPersistence : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // 씬 전환 시 입력 막힘/대시 레이어 무시 초기화
+        PlayerController pc = GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            pc.IsInputDisabled = false;
+            pc.IsInvincible = false;
+
+            // 대시 중 씬 이동 시 레이어 충돌 무시가 남을 수 있음 — 전부 복원
+            if (pc.stats != null)
+            {
+                int playerLayer = gameObject.layer;
+                int enemyMask = pc.stats.enemyLayer.value;
+                for (int i = 0; i < 32; i++)
+                {
+                    if ((enemyMask & (1 << i)) != 0)
+                        Physics2D.IgnoreLayerCollision(playerLayer, i, false);
+                }
+            }
+        }
+
         // 새 씬의 카메라가 이 플레이어를 따라가도록 재연결
         CameraController cam = FindObjectOfType<CameraController>();
         if (cam != null)
