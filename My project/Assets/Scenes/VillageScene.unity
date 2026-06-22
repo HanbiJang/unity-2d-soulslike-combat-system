@@ -836,13 +836,13 @@ MonoBehaviour:
   onItemDialogueEnded:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 0
+      - m_Target: {fileID: 333919673}
+        m_TargetAssemblyTypeName: NPCBlacksmith, Assembly-CSharp
+        m_MethodName: UpgradeWeapon
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -924,6 +924,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6ce3aaf6e1c6844bb297b994b54f4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogueData: {fileID: 11400000, guid: 07c1ae01aef95ee488b9cc4bf8c0b65d, type: 2}
+  itemData: {fileID: 11400000, guid: d2e9f0d8433c6da4881726cdda74b35c, type: 2}
 --- !u!1 &444055393
 GameObject:
   m_ObjectHideFlags: 0
