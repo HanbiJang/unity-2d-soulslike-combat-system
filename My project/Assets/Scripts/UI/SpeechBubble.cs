@@ -113,17 +113,29 @@ public class SpeechBubble : MonoBehaviour
 
     private void Update()
     {
-        if (targetTransform != null && mainCamera != null && canvas != null)
-        {
-            Vector2 screenPoint = mainCamera.WorldToScreenPoint(targetTransform.position + (Vector3)offset);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvas.transform as RectTransform,
-                screenPoint,
-                canvas.worldCamera,
-                out Vector2 localPoint
-            );
-            rectTransform.anchoredPosition = localPoint;
-        }
+        if (targetTransform == null || mainCamera == null || canvas == null) return;
+
+        Vector2 screenPoint = mainCamera.WorldToScreenPoint(targetTransform.position + (Vector3)offset);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            screenPoint,
+            canvas.worldCamera,
+            out Vector2 localPoint
+        );
+
+        // 말풍선이 캔버스(화면) 밖으로 나가지 않도록 클램프
+        RectTransform canvasRect = canvas.transform as RectTransform;
+        Rect bounds = canvasRect.rect;
+        Vector2 size = rectTransform.rect.size;
+
+        localPoint.x = Mathf.Clamp(localPoint.x,
+            bounds.xMin + rectTransform.pivot.x * size.x,
+            bounds.xMax - (1f - rectTransform.pivot.x) * size.x);
+        localPoint.y = Mathf.Clamp(localPoint.y,
+            bounds.yMin + rectTransform.pivot.y * size.y,
+            bounds.yMax - (1f - rectTransform.pivot.y) * size.y);
+
+        rectTransform.anchoredPosition = localPoint;
     }
 }
 

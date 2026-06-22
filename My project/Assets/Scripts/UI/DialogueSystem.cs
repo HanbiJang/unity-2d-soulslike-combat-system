@@ -41,6 +41,7 @@ public class DialogueSystem : MonoBehaviour
     private Coroutine screenFadeCoroutine;
     private bool fadeOutOnEnd = false;
     private bool fadeOutOnStart = false;
+    private System.Action onDialogueComplete; // 대화가 끝났을 때 호출할 콜백 (월드 이벤트 트리거용)
 
     private void Awake()
     {
@@ -135,7 +136,7 @@ public class DialogueSystem : MonoBehaviour
         }
     }
 
-    public void StartDialogue(DialogueData dialogue, bool fadeOutOnEnd = false, bool fadeOutOnStart = false)
+    public void StartDialogue(DialogueData dialogue, bool fadeOutOnEnd = false, bool fadeOutOnStart = false, System.Action onComplete = null)
     {
         if (dialogue == null || dialogue.dialogueLines.Length == 0) return;
         if (dialogue.playOnce && _playedOnceDialogues.Contains(dialogue)) return;
@@ -146,6 +147,7 @@ public class DialogueSystem : MonoBehaviour
         canContinue = false;
         this.fadeOutOnEnd = fadeOutOnEnd;
         this.fadeOutOnStart = fadeOutOnStart;
+        this.onDialogueComplete = onComplete;
 
         FaceAllEnemiesTowardPlayer();
         DisablePlayerInput();
@@ -318,6 +320,11 @@ public class DialogueSystem : MonoBehaviour
     {
         if (cameraController != null) cameraController.RestoreOriginalTarget();
         EnablePlayerInput();
+
+        // 대화 종료 콜백 호출 (월드 이벤트 트리거 등)
+        System.Action callback = onDialogueComplete;
+        onDialogueComplete = null;
+        callback?.Invoke();
     }
 
     private IEnumerator FadeScreen(float from, float to, float duration)
