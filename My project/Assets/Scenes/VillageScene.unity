@@ -1045,6 +1045,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 07c1ae01aef95ee488b9cc4bf8c0b65d, type: 2}
   itemData: {fileID: 11400000, guid: d2e9f0d8433c6da4881726cdda74b35c, type: 2}
+  upgradeAnimationName: NPC1 Anim
 --- !u!1 &444055393
 GameObject:
   m_ObjectHideFlags: 0
