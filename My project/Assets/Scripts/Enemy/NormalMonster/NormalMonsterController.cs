@@ -16,6 +16,10 @@ public class NormalMonsterController : Enemy
     [SerializeField] Transform firePoint;
     [SerializeField] LayerMask groundLayer;
 
+    [Header("식별자")]
+    [Tooltip("이 몬스터를 구분하는 고유 ID. 처치 여부를 씬 재진입 후에도 기억하려면 비워두지 말 것")]
+    [SerializeField] string monsterId;
+
     [Header("아이템 드롭")]
     [SerializeField] ItemData[] dropItems;           // 이 몬스터가 드롭할 아이템 목록
     [SerializeField] GameObject itemPickupPrefab;    // 바닥에 생성될 픽업 프리팹
@@ -52,6 +56,13 @@ public class NormalMonsterController : Enemy
 
     protected override void Awake()
     {
+        // 이미 처치한 몬스터면 다시 소환하지 않음
+        if (MonsterDefeatManager.Instance != null && MonsterDefeatManager.Instance.IsDefeated(monsterId))
+        {
+            DestroyImmediate(gameObject);
+            return;
+        }
+
         base.Awake();
         Rb = GetComponent<Rigidbody2D>();
         Anim = GetComponentInChildren<Animator>();
@@ -137,6 +148,7 @@ public class NormalMonsterController : Enemy
 
         if (currentHealth <= 0)
         {
+            MonsterDefeatManager.Instance?.MarkDefeated(monsterId);
             StateMachine.ChangeState(DeathState);
             return;
         }

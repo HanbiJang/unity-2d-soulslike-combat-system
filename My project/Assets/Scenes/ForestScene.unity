@@ -22171,7 +22171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 604806421648055035, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 240
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 604806421648055035, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -22183,7 +22183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 604806421648055035, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140
+      value: -215
       objectReference: {fileID: 0}
     - target: {fileID: 2808557056710563113, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_Name
@@ -22211,7 +22211,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3565923456755020824, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -225
+      value: -140
       objectReference: {fileID: 0}
     - target: {fileID: 5471432826668177490, guid: 5d5a210ed05a41c4b8a19af36112cf2b, type: 3}
       propertyPath: m_Pivot.x
@@ -23244,6 +23244,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  monsterId: NM1
   dropItems:
   - {fileID: 11400000, guid: e2c84cba9b7548041a64001e266b5888, type: 2}
   itemPickupPrefab: {fileID: 5768976351960364841, guid: f86c5f5bf9d74b348b3e54b746d57075, type: 3}
@@ -23406,6 +23407,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 8a733e6aa2e897b4ea20e47ae225c1af, type: 2}
+  requiredItemId: 
+  itemDialogueData: {fileID: 0}
+  onItemDialogueEnded:
+    m_PersistentCalls:
+      m_Calls: []
   interactKey: 102
   interactPrompt: {fileID: 897204579}
 --- !u!61 &1130145943
@@ -23759,7 +23765,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7914013995090637950, guid: 0401c2e5b1adefb4788c9b9d0fe15c73, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 240
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 7914013995090637950, guid: 0401c2e5b1adefb4788c9b9d0fe15c73, type: 3}
       propertyPath: m_SizeDelta.y
@@ -23771,7 +23777,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7914013995090637950, guid: 0401c2e5b1adefb4788c9b9d0fe15c73, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -225
+      value: -215
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

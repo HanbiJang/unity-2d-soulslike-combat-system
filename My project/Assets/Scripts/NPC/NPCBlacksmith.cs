@@ -12,6 +12,12 @@ public class NPCBlacksmith : MonoBehaviour
     [Tooltip("대화 완료 후, 받을 보상")]
     [SerializeField] private ItemData itemData;
 
+
+    private void Start()
+    {
+        
+    }
+
     public void UpgradeWeapon()
     {
         if (DialogueSystem.Instance == null || dialogueData == null) return;
@@ -21,6 +27,9 @@ public class NPCBlacksmith : MonoBehaviour
         //보상 아이템 습득
         InventoryManager.Instance?.AddItem(itemData);
         ItemPickupUI.Instance?.Show(itemData.itemName);
+
+        //대장장이 애니메이션 재생
+
 
         dialogueData = null; //1회 적용
     }
