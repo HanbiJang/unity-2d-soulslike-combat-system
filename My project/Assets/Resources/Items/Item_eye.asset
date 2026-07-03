@@ -17,3 +17,4 @@ MonoBehaviour:
   description: "\uB300\uC7A5\uC7A5\uC774\uC758 \uC758\uC548, \uAE30\uACC4\uC2DD \uC811\uCD09
     \uBC29\uC2DD\uC774\uB2E4."
   icon: {fileID: 21300000, guid: b099f441e67dedf498d77fc64ae720a2, type: 3}
+  stayInPlace: 1

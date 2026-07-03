@@ -51,6 +51,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fallSpeed: 6
+  stayInPlace: 1
 --- !u!212 &7640910304061706005
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -16,4 +16,7 @@ public class ItemData : ScriptableObject
 
     [Tooltip("인벤토리에 표시될 아이콘")]
     public Sprite icon;
+
+    [Tooltip("체크하면 줍지 않고 씬을 나가도 아이템이 사라지지 않고 그 자리에 남아있음")]
+    public bool stayInPlace;
 }
